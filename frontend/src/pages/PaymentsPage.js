@@ -104,10 +104,12 @@ export default function PaymentsPage() {
   // Determine payment scheme based on currency
   const getPaymentScheme = (currency) => {
     switch ((currency || '').toUpperCase()) {
-      case 'EUR': return 'SEPA_CT';
-      case 'GBP': return 'FPS';
-      case 'USD': return 'SWIFT';
-      default: return 'SEPA_CT';
+      case 'EUR': return 'SCT'; // SEPA Credit Transfer
+      case 'GBP': return 'FPS'; // Faster Payments
+      case 'USD': return 'DOMESTIC_WIRE';
+      case 'AUD': return 'NPP';
+      case 'CAD': return 'EMT_EAGLE_NET';
+      default: return 'SWIFT';
     }
   };
 
