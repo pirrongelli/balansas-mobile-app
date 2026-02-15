@@ -147,8 +147,22 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signIn = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    let data, error;
+    try {
+      const result = await supabase.auth.signInWithPassword({ email, password });
+      data = result.data;
+      error = result.error;
+    } catch (err) {
+      throw new Error('Invalid email or password. Please try again.');
+    }
+    if (error) {
+      const msg = error.message || 'Invalid email or password';
+      throw new Error(
+        msg.includes('Invalid login') ? 'Invalid email or password. Please try again.' :
+        msg.includes('body stream') ? 'Invalid email or password. Please try again.' :
+        msg
+      );
+    }
     setSession(data.session);
     setUser(data.user);
     const needsMfa = await checkMfaStatus();
