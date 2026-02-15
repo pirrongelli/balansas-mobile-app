@@ -190,23 +190,52 @@ export function AuthProvider({ children }) {
   };
 
   const verifyMfa = async (factorId, code) => {
-    const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });
-    if (challengeError) throw challengeError;
+    try {
+      console.log('[MFA] Step 1: Creating challenge for factor:', factorId);
+      const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });
+      console.log('[MFA] Step 1 result:', { challengeData, challengeError });
+      if (challengeError) {
+        console.error('[MFA] Challenge error:', challengeError);
+        throw challengeError;
+      }
 
-    const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
-      factorId,
-      challengeId: challengeData.id,
-      code,
-    });
-    if (verifyError) throw verifyError;
+      console.log('[MFA] Step 2: Verifying with challengeId:', challengeData.id);
+      const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
+        factorId,
+        challengeId: challengeData.id,
+        code,
+      });
+      console.log('[MFA] Step 2 result:', { verifyData, verifyError });
+      if (verifyError) {
+        console.error('[MFA] Verify error:', verifyError);
+        throw verifyError;
+      }
 
-    setMfaRequired(false);
-    setSession(verifyData.session || session);
-    const currentUser = verifyData.user || user;
-    if (currentUser) {
-      await resolveCustomerContext(currentUser.id);
+      console.log('[MFA] Step 3: Verification successful, updating state');
+      setMfaRequired(false);
+      
+      // Get fresh session after MFA verification
+      const { data: { session: freshSession } } = await supabase.auth.getSession();
+      console.log('[MFA] Step 4: Fresh session obtained:', !!freshSession);
+      
+      if (freshSession) {
+        setSession(freshSession);
+        setUser(freshSession.user);
+        await resolveCustomerContext(freshSession.user.id);
+      } else if (verifyData) {
+        setSession(verifyData.session || session);
+        const currentUser = verifyData.user || user;
+        if (currentUser) {
+          await resolveCustomerContext(currentUser.id);
+        }
+      }
+      
+      console.log('[MFA] Step 5: Complete - mfaRequired set to false');
+      return verifyData;
+    } catch (err) {
+      console.error('[MFA] verifyMfa caught error:', err);
+      throw err;
     }
-    return verifyData;
   };
 
   const signOut = async () => {
