@@ -164,7 +164,7 @@ export default function AccountDetailPage() {
           ) : (
             <div className="space-y-1">
               {transactions.slice(0, 10).map((tx, i) => {
-                const isIncoming = tx.direction === 'incoming' || tx.type === 'deposit';
+                const incoming = isTxIncoming(tx);
                 return (
                   <div
                     key={tx.id || i}
@@ -172,23 +172,23 @@ export default function AccountDetailPage() {
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        isIncoming ? 'bg-[hsl(var(--status-success)/0.12)]' : 'bg-[hsl(var(--surface-2))]'
+                        incoming ? 'bg-[hsl(var(--status-success)/0.12)]' : 'bg-[hsl(var(--surface-2))]'
                       }`}>
-                        {isIncoming
+                        {incoming
                           ? <ArrowDownLeft className="h-3.5 w-3.5 text-[hsl(var(--status-success))]" />
                           : <ArrowUpRight className="h-3.5 w-3.5 text-[hsl(var(--muted-foreground))]" />
                         }
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium truncate max-w-[140px]">
-                          {tx.counterparty_name || tx.description || tx.type || 'Transaction'}
+                          {getTxDisplayName(tx)}
                         </p>
                         <p className="text-[10px] text-[hsl(var(--muted-foreground))]">{formatDate(tx.created_at)}</p>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className={`text-sm font-semibold tabular-nums ${isIncoming ? 'text-[hsl(var(--status-success))]' : ''}`}>
-                        {isIncoming ? '+' : '-'}{formatCurrency(tx.amount, tx.currency)}
+                      <p className={`text-sm font-semibold tabular-nums ${incoming ? 'text-[hsl(var(--status-success))]' : ''}`}>
+                        {incoming ? '+' : '-'}{formatCurrency(tx.amount, tx.currency)}
                       </p>
                       <StatusBadge status={tx.status} />
                     </div>
