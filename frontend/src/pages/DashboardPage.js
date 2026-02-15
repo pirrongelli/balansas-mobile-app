@@ -15,7 +15,7 @@ import {
   Wallet, SendHorizontal, UserPlus, ChevronRight, ArrowDownLeft,
   ArrowUpRight, RefreshCw, Bell, ArrowLeftRight, TrendingUp
 } from 'lucide-react';
-import { formatCurrency, formatDate } from '@/lib/formatters';
+import { formatCurrency, formatDate, getTxDisplayName, isTxIncoming, formatTxType } from '@/lib/formatters';
 
 export default function DashboardPage() {
   const { customer, user, providers, signOut } = useAuth();
