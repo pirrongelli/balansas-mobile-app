@@ -236,31 +236,93 @@ export default function PayeesPage() {
               </div>
             )}
             <div className="space-y-2">
-              <Label className="text-sm">Name</Label>
+              <Label className="text-sm">Payee Name <span className="text-[hsl(var(--status-danger))]">*</span></Label>
               <Input
-                placeholder="Payee name"
+                placeholder="Full name or company name"
                 value={form.name}
                 onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
                 className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
                 data-testid="payee-name-input"
               />
             </div>
-            <div className="space-y-2">
-              <Label className="text-sm">Currency</Label>
-              <Select value={form.currency} onValueChange={(v) => setForm(f => ({ ...f, currency: v }))}>
-                <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]" data-testid="payee-currency-select">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="EUR">EUR - Euro</SelectItem>
-                  <SelectItem value="GBP">GBP - British Pound</SelectItem>
-                  <SelectItem value="USD">USD - US Dollar</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label className="text-sm">Type</Label>
+                <Select value={form.type} onValueChange={(v) => setForm(f => ({ ...f, type: v }))}>
+                  <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="INDIVIDUAL">Individual</SelectItem>
+                    <SelectItem value="BUSINESS">Business</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm">Currency</Label>
+                <Select value={form.currency} onValueChange={(v) => setForm(f => ({ ...f, currency: v }))}>
+                  <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]" data-testid="payee-currency-select">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="EUR">EUR</SelectItem>
+                    <SelectItem value="GBP">GBP</SelectItem>
+                    <SelectItem value="USD">USD</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            {form.currency === 'EUR' && (
-              <>
+            {/* Address */}
+            <div className="pt-2">
+              <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] mb-3 uppercase tracking-wider">Address</p>
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <Label className="text-sm">Address Line</Label>
+                  <Input
+                    placeholder="123 Main Street"
+                    value={form.addressLine1}
+                    onChange={(e) => setForm(f => ({ ...f, addressLine1: e.target.value }))}
+                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-sm">City</Label>
+                    <Input
+                      placeholder="London"
+                      value={form.city}
+                      onChange={(e) => setForm(f => ({ ...f, city: e.target.value }))}
+                      className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm">Postal Code</Label>
+                    <Input
+                      placeholder="SW1A 1AA"
+                      value={form.postalCode}
+                      onChange={(e) => setForm(f => ({ ...f, postalCode: e.target.value }))}
+                      className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sm">Country Code</Label>
+                  <Input
+                    placeholder="GB, DE, US..."
+                    value={form.country}
+                    onChange={(e) => setForm(f => ({ ...f, country: e.target.value.toUpperCase() }))}
+                    maxLength={2}
+                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bank Details */}
+            <div className="pt-2">
+              <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] mb-3 uppercase tracking-wider">Bank Details</p>
+              <div className="space-y-3">
                 <div className="space-y-2">
                   <Label className="text-sm">IBAN</Label>
                   <Input
