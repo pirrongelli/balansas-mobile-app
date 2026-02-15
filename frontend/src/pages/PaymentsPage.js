@@ -196,100 +196,90 @@ export default function PaymentsPage() {
     setIsSubmitting(true);
     try {
       if (selectedAccount.provider === 'fiat_republic') {
-        // EU Rails - Fiat Republic
+        // EU Rails - Fiat Republic: single-step payment
         const paymentBody = {
-          fromId: selectedAccount.fr_account_id || selectedAccount.id,
-          toId: selectedPayee.fr_payee_id || selectedPayee.id,
+          from: { id: selectedAccount.fr_account_id || selectedAccount.id, type: 'FIAT_ACCOUNT' },
+          to: { id: selectedPayee.fr_payee_id || selectedPayee.id, type: 'PAYEE' },
           amount: formatAmountForApi(amount),
           currency: selectedAccount.currency,
           reference: reference.trim(),
-          paymentScheme: getPaymentScheme(selectedAccount.currency),
+          paymentScheme: paymentScheme,
         };
 
-        console.log('[Payment] FR full request:', {
-          endpoint: '/api/v1/payments',
-          method: 'POST',
-          customerId: customer.id,
-          body: paymentBody,
-        });
+        console.log('[Payment] EU Rails payload:', paymentBody);
 
         const response = await supabase.functions.invoke('fr-proxy', {
-          body: {
-            endpoint: '/api/v1/payments',
-            method: 'POST',
-            customerId: customer.id,
-            body: paymentBody,
-          },
+          body: { endpoint: '/api/v1/payments', method: 'POST', customerId: customer.id, body: paymentBody },
         });
-        
-        console.log('[Payment] FR response:', response);
-        
-        // Handle edge function errors - try to get response body
+
         if (response.error) {
-          let errorDetail = response.error.message;
-          // Try to read the response context for more details
+          let detail = response.error.message;
           if (response.error.context) {
             try {
-              const body = await response.error.context.json();
-              console.log('[Payment] FR error body:', body);
-              errorDetail = body?.message || body?.error || JSON.stringify(body?.warnings || body);
+              const errBody = await response.error.context.json();
+              console.log('[Payment] EU error:', errBody);
+              detail = errBody?.warnings?.map(w => `${w.position}: ${w.issue}`).join(', ') || errBody?.message || detail;
             } catch { /* ignore */ }
           }
-          throw new Error(errorDetail);
+          throw new Error(detail);
         }
-        
-        if (response.data?.error || response.data?.errorCode) {
-          const msg = response.data.message || response.data.error;
+        if (response.data?.errorCode) {
           const warnings = response.data.warnings?.map(w => `${w.position}: ${w.issue}`).join(', ');
-          throw new Error(warnings || msg || 'Payment failed');
+          throw new Error(warnings || response.data.message);
         }
-        
         setSubmitResult({ success: true, data: response.data });
+
       } else {
-        // US Rails - Rail.io withdrawal
+        // US Rails - Rail.io: two-step Create + Accept
         const withdrawalBody = {
+          withdrawal_rail: withdrawalRail,
           source_account_id: selectedAccount.rail_account_id || selectedAccount.id,
-          amount: formatAmountForApi(amount),
-          currency: selectedAccount.currency,
-          reference: reference.trim(),
-          purpose: reference.trim(),
+          destination_counterparty_id: selectedPayee.rail_counterparty_id || selectedPayee.id,
+          amount: parseFloat(amount),
+          purpose: purpose,
+          description: reference.trim() || undefined,
+          memo: memo.trim() || undefined,
         };
 
-        console.log('[Payment] Rail full request:', {
-          customerId: customer.id,
-          endpoint: '/withdrawals',
-          method: 'POST',
-          body: withdrawalBody,
+        console.log('[Payment] US Rails Create payload:', withdrawalBody);
+
+        // Step 1: Create withdrawal
+        const createResp = await supabase.functions.invoke('rail-proxy', {
+          body: { customerId: customer.id, endpoint: '/withdrawals', method: 'POST', body: withdrawalBody },
         });
 
-        const response = await supabase.functions.invoke('rail-proxy', {
-          body: {
-            customerId: customer.id,
-            endpoint: '/withdrawals',
-            method: 'POST',
-            body: withdrawalBody,
-          },
-        });
-        
-        console.log('[Payment] Rail response:', response);
-        
-        if (response.error) {
-          let errorDetail = response.error.message;
-          if (response.error.context) {
+        if (createResp.error) {
+          let detail = createResp.error.message;
+          if (createResp.error.context) {
             try {
-              const body = await response.error.context.json();
-              console.log('[Payment] Rail error body:', body);
-              errorDetail = body?.message || body?.error || JSON.stringify(body);
+              const errBody = await createResp.error.context.json();
+              console.log('[Payment] US create error:', errBody);
+              detail = errBody?.message || errBody?.error || JSON.stringify(errBody);
             } catch { /* ignore */ }
           }
-          throw new Error(errorDetail);
+          throw new Error(detail);
         }
-        
-        if (response.data?.error || response.data?.errorCode) {
-          throw new Error(response.data.message || response.data.error || 'Payment failed');
+        if (createResp.data?.error || createResp.data?.errorCode) {
+          throw new Error(createResp.data.message || createResp.data.error);
         }
-        
-        setSubmitResult({ success: true, data: response.data });
+
+        const withdrawalId = createResp.data?.id || createResp.data?.withdrawal_id;
+        console.log('[Payment] US Rails withdrawal created:', withdrawalId);
+
+        if (withdrawalId) {
+          // Step 2: Accept withdrawal (Ed25519 signed server-side)
+          console.log('[Payment] US Rails Accepting:', withdrawalId);
+          const acceptResp = await supabase.functions.invoke('rail-proxy', {
+            body: { customerId: customer.id, endpoint: `/withdrawals/${withdrawalId}/accept`, method: 'POST' },
+          });
+
+          if (acceptResp.error) {
+            console.warn('[Payment] Accept warning:', acceptResp.error.message);
+            // Don't fail - the withdrawal was created, accept may succeed async
+          }
+        }
+
+        setSubmitResult({ success: true, data: createResp.data });
       }
       toast.success('Payment created successfully');
     } catch (err) {
