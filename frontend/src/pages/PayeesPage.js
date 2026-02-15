@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Users, Plus, Search, X, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { RailCounterpartyWizard } from '@/components/shared/RailCounterpartyWizard';
+import { getPayeeName } from '@/lib/formatters';
 import { ProviderBadge } from '@/components/shared/ProviderBadge';
 
 export default function PayeesPage() {
