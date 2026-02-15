@@ -244,25 +244,30 @@ export default function PaymentsPage() {
               onAction={() => {}}
             />
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {payees.map((payee, i) => (
                 <div
                   key={payee.id || i}
                   data-testid={`payee-row-${i}`}
-                  className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))] transition-colors duration-150"
+                  className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-3.5 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))] transition-colors duration-150"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-[hsl(var(--surface-2))] flex items-center justify-center text-xs font-bold text-[hsl(var(--foreground))]">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-[hsl(var(--accent-teal)/0.1)] flex items-center justify-center text-xs font-bold text-[hsl(var(--accent-teal))] flex-shrink-0">
                       {getPayeeName(payee).slice(0, 2).toUpperCase()}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium truncate max-w-[180px]">
+                      <p className="text-sm font-medium truncate max-w-[160px]">
                         {getPayeeName(payee)}
                       </p>
-                      <p className="text-[10px] text-[hsl(var(--muted-foreground))]">
-                        {payee.currency || ''} {payee.account_number ? `• ${payee.account_number.slice(0, 4)}...${payee.account_number.slice(-4)}` : ''}
+                      <p className="text-[10px] text-[hsl(var(--muted-foreground))] mt-0.5">
+                        <span className="font-medium text-[hsl(var(--foreground)/0.7)]">{payee.currency || ''}</span>
                         {payee.bank_name ? ` • ${payee.bank_name}` : ''}
                       </p>
+                      {payee.account_number && (
+                        <p className="text-[10px] text-[hsl(var(--text-3))] tabular-nums">
+                          {payee.account_number.slice(0, 4)}...{payee.account_number.slice(-4)}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <Button
