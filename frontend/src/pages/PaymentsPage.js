@@ -301,6 +301,10 @@ export default function PaymentsPage() {
     setReference('');
     setSubmitResult(null);
     setFeeData(null);
+    setPaymentScheme('SCT');
+    setWithdrawalRail('ACH');
+    setPurpose('TRADE_TRANSACTIONS');
+    setMemo('');
   };
 
   const canProceed = () => {
