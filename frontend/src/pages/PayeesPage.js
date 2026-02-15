@@ -24,6 +24,7 @@ export default function PayeesPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState('');
+  const [createProvider, setCreateProvider] = useState('fiat_republic');
   const [form, setForm] = useState({ 
     name: '', currency: 'EUR', iban: '', bic: '', accountNumber: '', sortCode: '', routingNumber: '',
     type: 'PERSON', line1: '', city: '', country: 'GB', postalCode: ''
