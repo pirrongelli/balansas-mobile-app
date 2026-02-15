@@ -43,11 +43,23 @@ export default function PaymentsPage() {
     if (!customer?.id) return;
     try {
       setError(null);
-      const { data: payeeData } = await supabase
+      // Fetch EU Rails payees
+      const { data: frPayees } = await supabase
         .from('fr_payees')
         .select('*')
         .eq('customer_id', customer.id);
-      setPayees(payeeData || []);
+      
+      // Fetch US Rails counterparties
+      const { data: railCounterparties } = await supabase
+        .from('rail_counterparties')
+        .select('*')
+        .eq('customer_id', customer.id);
+
+      const allPayees = [
+        ...(frPayees || []).map(p => ({ ...p, provider: 'fiat_republic' })),
+        ...(railCounterparties || []).map(p => ({ ...p, provider: 'rail_io' })),
+      ];
+      setPayees(allPayees);
 
       const { data: frAccounts } = await supabase
         .from('fr_fiat_accounts')
