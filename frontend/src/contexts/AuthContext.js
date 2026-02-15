@@ -257,6 +257,7 @@ export function AuthProvider({ children }) {
       if (aalCheck?.currentLevel === 'aal2') {
         // Verification actually succeeded despite potential SDK error!
         console.log('[MFA] AAL2 confirmed! MFA verification succeeded.');
+        mfaCompletedRef.current = true;
         setMfaRequired(false);
 
         const { data: { session: freshSession } } = await supabase.auth.getSession();
