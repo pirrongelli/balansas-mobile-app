@@ -162,7 +162,7 @@ export default function AccountDetailPage() {
               <p className="text-sm text-[hsl(var(--muted-foreground))]">No transactions yet</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="rounded-xl border border-[hsl(var(--border))] overflow-hidden divide-y divide-[hsl(var(--border))]">
               {transactions.slice(0, 10).map((tx, i) => {
                 const incoming = isTxIncoming(tx);
                 return (
