@@ -152,12 +152,12 @@ export default function TeamPage() {
             onAction={canManage ? () => setShowInvite(true) : undefined}
           />
         ) : (
-          <div className="space-y-2.5">
+          <div className="rounded-xl border border-[hsl(var(--border))] overflow-hidden divide-y divide-[hsl(var(--border))]">
             {members.map((member, i) => (
               <div
                 key={member.id || i}
                 data-testid={`team-member-${i}`}
-                className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-3.5 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))]"
+                className="flex items-center justify-between gap-3 px-4 py-4 bg-[hsl(var(--surface-1))]"
               >
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
