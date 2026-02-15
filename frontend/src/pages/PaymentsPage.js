@@ -248,14 +248,15 @@ export default function PaymentsPage() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full bg-[hsl(var(--surface-2))] flex items-center justify-center text-xs font-bold text-[hsl(var(--foreground))]">
-                      {(payee.name || payee.label || '??').slice(0, 2).toUpperCase()}
+                      {getPayeeName(payee).slice(0, 2).toUpperCase()}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate max-w-[180px]">
-                        {payee.name || payee.label || 'Payee'}
+                        {getPayeeName(payee)}
                       </p>
                       <p className="text-[10px] text-[hsl(var(--muted-foreground))]">
-                        {payee.currency || ''} {payee.iban ? `• ${payee.iban.slice(0, 4)}...${payee.iban.slice(-4)}` : ''}
+                        {payee.currency || ''} {payee.account_number ? `• ${payee.account_number.slice(0, 4)}...${payee.account_number.slice(-4)}` : ''}
+                        {payee.bank_name ? ` • ${payee.bank_name}` : ''}
                       </p>
                     </div>
                   </div>
