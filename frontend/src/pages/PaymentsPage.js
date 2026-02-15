@@ -314,10 +314,10 @@ export default function PaymentsPage() {
                       }`}
                     >
                       <div className="w-9 h-9 rounded-full bg-[hsl(var(--surface-2))] flex items-center justify-center text-xs font-bold">
-                        {(payee.name || '??').slice(0, 2).toUpperCase()}
+                        {getPayeeName(payee).slice(0, 2).toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{payee.name || payee.label}</p>
+                        <p className="text-sm font-medium truncate">{getPayeeName(payee)}</p>
                         <p className="text-[10px] text-[hsl(var(--muted-foreground))]">{payee.currency}</p>
                       </div>
                       {selectedPayee?.id === payee.id && (
