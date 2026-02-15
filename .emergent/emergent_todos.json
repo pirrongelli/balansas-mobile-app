@@ -1,34 +1,18 @@
 [
   {
-    "content": "Setup: Supabase client, env vars, dark theme tokens, fonts, app shell structure",
-    "status": "completed"
+    "content": "Rebuild EU Rails payee form with USD ACH/SWIFT support and state field",
+    "status": "in_progress"
   },
   {
-    "content": "Auth flow: Login page with Supabase auth, MFA verification, session management",
-    "status": "completed"
+    "content": "Build US Rails 5-step counterparty wizard (Account → Profile → Address → Bank → Institution)",
+    "status": "pending"
   },
   {
-    "content": "Dashboard: Balance overview, quick stats, recent transactions",
-    "status": "completed"
+    "content": "Add proper validation (BIC regex, E.164 phone, address 35 char limit)",
+    "status": "pending"
   },
   {
-    "content": "Accounts: Fiat accounts list (EU + US Rails), account details with banking info",
-    "status": "completed"
-  },
-  {
-    "content": "Transactions: Unified history with filters and search",
-    "status": "completed"
-  },
-  {
-    "content": "Bottom tab navigation + page transitions + mobile shell",
-    "status": "completed"
-  },
-  {
-    "content": "Payments: Create payment wizard + payees management",
-    "status": "completed"
-  },
-  {
-    "content": "Testing & visual polish",
-    "status": "completed"
+    "content": "Test both creation flows",
+    "status": "pending"
   }
 ]
