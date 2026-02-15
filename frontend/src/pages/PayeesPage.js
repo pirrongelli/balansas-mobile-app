@@ -117,7 +117,7 @@ export default function PayeesPage() {
       setShowCreate(false);
       setForm({ 
         name: '', currency: 'EUR', iban: '', bic: '', accountNumber: '', sortCode: '', routingNumber: '',
-        type: 'INDIVIDUAL', addressLine1: '', city: '', country: '', postalCode: ''
+        type: 'PERSON', line1: '', city: '', country: 'GB', postalCode: ''
       });
       fetchPayees();
     } catch (err) {
