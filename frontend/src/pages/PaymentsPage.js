@@ -48,12 +48,6 @@ export default function PaymentsPage() {
         .select('*')
         .eq('customer_id', customer.id);
       setPayees(payeeData || []);
-      
-      // Debug: log first payee to see field names
-      if (payeeData?.length > 0) {
-        console.log('[DEBUG] Sample payee fields:', Object.keys(payeeData[0]));
-        console.log('[DEBUG] Sample payee data:', JSON.stringify(payeeData[0], null, 2));
-      }
 
       const { data: frAccounts } = await supabase
         .from('fr_fiat_accounts')
