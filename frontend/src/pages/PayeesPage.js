@@ -59,10 +59,10 @@ export default function PayeesPage() {
         currency: form.currency,
         type: form.type,
         address: {
-          addressLine1: form.addressLine1 || 'N/A',
+          line1: form.line1 || 'N/A',
           city: form.city || 'N/A',
           country: form.country || 'GB',
-          postalCode: form.postalCode || 'N/A',
+          postCode: form.postalCode || 'N/A',
         },
         bankDetails: {},
       };
