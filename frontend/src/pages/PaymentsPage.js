@@ -516,22 +516,31 @@ export default function PaymentsPage() {
               </div>
             )}
 
-            {/* Step 1: Amount */}
+            {/* Step 1: Amount & Details */}
             {step === 1 && (
               <div className="space-y-4">
                 {selectedPayee && (
                   <div className="bg-[hsl(var(--accent-teal)/0.06)] border border-[hsl(var(--accent-teal)/0.15)] rounded-lg px-3 py-2 text-xs text-[hsl(var(--accent-teal))]">
-                    Sending to <span className="font-semibold">{getPayeeName(selectedPayee)}</span> in <span className="font-semibold">{selectedPayee.currency}</span>
+                    Sending to <span className="font-semibold">{getPayeeName(selectedPayee)}</span> via <span className="font-semibold">{selectedPayee.provider === 'rail_io' ? 'US Rails' : 'EU Rails'}</span>
                   </div>
                 )}
                 <div className="space-y-2">
                   <Label className="text-sm">Source Account ({selectedPayee?.currency || ''})</Label>
                   {matchingAccounts.length === 0 ? (
-                    <p className="text-sm text-[hsl(var(--status-warning))] py-2">No accounts available in {selectedPayee?.currency}</p>
+                    <p className="text-sm text-[hsl(var(--status-warning))] py-2">No accounts in {selectedPayee?.currency}</p>
                   ) : (
                     <Select
                       value={selectedAccount?.id || ''}
-                      onValueChange={(val) => setSelectedAccount(matchingAccounts.find(a => a.id === val))}
+                      onValueChange={(val) => {
+                        const acc = matchingAccounts.find(a => a.id === val);
+                        setSelectedAccount(acc);
+                        // Set default scheme/rail based on provider
+                        if (acc?.provider === 'fiat_republic') {
+                          setPaymentScheme(getDefaultScheme(acc.currency));
+                        } else {
+                          setWithdrawalRail(getDefaultRail(acc.currency));
+                        }
+                      }}
                     >
                       <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]" data-testid="payment-account-select">
                         <SelectValue placeholder="Select account" />
@@ -546,6 +555,55 @@ export default function PaymentsPage() {
                     </Select>
                   )}
                 </div>
+
+                {/* Payment Scheme (EU) or Withdrawal Rail (US) */}
+                {selectedAccount && selectedAccount.provider === 'fiat_republic' && (
+                  <div className="space-y-2">
+                    <Label className="text-sm">Payment Scheme</Label>
+                    <Select value={paymentScheme} onValueChange={setPaymentScheme}>
+                      <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(EU_SCHEMES[selectedAccount.currency] || EU_SCHEMES.EUR).map(s => (
+                          <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {selectedAccount && selectedAccount.provider === 'rail_io' && (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Payment Rail <span className="text-[hsl(var(--status-danger))]">*</span></Label>
+                      <Select value={withdrawalRail} onValueChange={setWithdrawalRail}>
+                        <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {(US_RAILS[selectedAccount.currency] || US_RAILS.USD).map(r => (
+                            <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Purpose <span className="text-[hsl(var(--status-danger))]">*</span></Label>
+                      <Select value={purpose} onValueChange={setPurpose}>
+                        <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[200px]">
+                          {PURPOSES.map(p => (
+                            <SelectItem key={p} value={p}>{p.replace(/_/g, ' ').toLowerCase().replace(/^\w/, c => c.toUpperCase())}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
+
                 <div className="space-y-2">
                   <Label className="text-sm">Amount</Label>
                   <Input
@@ -564,32 +622,52 @@ export default function PaymentsPage() {
                     </p>
                   )}
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-sm">Reference <span className="text-[hsl(var(--status-danger))]">*</span></Label>
-                  <Input
-                    data-testid="payment-reference-input"
-                    placeholder={selectedPayee?.currency === 'USD' || selectedPayee?.currency === 'GBP' ? 'e.g. PayRef01' : 'Payment reference'}
-                    value={reference}
-                    onChange={(e) => setReference(e.target.value)}
-                    maxLength={selectedPayee?.currency === 'USD' || selectedPayee?.currency === 'GBP' ? 17 : 140}
-                    className={`h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))] ${reference && !isReferenceValid(reference, selectedPayee?.currency) ? 'border-[hsl(var(--status-danger)/0.5)]' : ''}`}
-                  />
-                  {getReferenceHint(selectedPayee?.currency) && (
-                    <p className="text-[10px] text-[hsl(var(--muted-foreground))]">{getReferenceHint(selectedPayee?.currency)}</p>
-                  )}
-                  {reference && !isReferenceValid(reference, selectedPayee?.currency) && (
-                    <p className="text-[10px] text-[hsl(var(--status-danger))]">
-                      {reference.replace(/[\s\-\.&\/]/g, '').length < 6
-                        ? `Need at least 6 alphanumeric characters (currently ${reference.replace(/[\s\-\.&\/]/g, '').length})`
-                        : reference.length > 17
-                          ? 'Max 17 characters'
-                          : 'Characters must not all be the same'}
-                    </p>
-                  )}
-                  {!reference && amount && (
-                    <p className="text-[10px] text-[hsl(var(--status-warning))]">Reference is required</p>
-                  )}
-                </div>
+
+                {/* Reference - EU Rails */}
+                {selectedAccount?.provider === 'fiat_republic' && (
+                  <div className="space-y-2">
+                    <Label className="text-sm">Reference <span className="text-[hsl(var(--status-danger))]">*</span></Label>
+                    <Input
+                      data-testid="payment-reference-input"
+                      placeholder={selectedPayee?.currency === 'USD' || selectedPayee?.currency === 'GBP' ? 'e.g. PayRef01' : 'Payment reference'}
+                      value={reference}
+                      onChange={(e) => setReference(e.target.value)}
+                      maxLength={selectedPayee?.currency === 'USD' || selectedPayee?.currency === 'GBP' ? 17 : 140}
+                      className={`h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))] ${reference && !isReferenceValid(reference, selectedPayee?.currency) ? 'border-[hsl(var(--status-danger)/0.5)]' : ''}`}
+                    />
+                    {getReferenceHint(selectedPayee?.currency) && (
+                      <p className="text-[10px] text-[hsl(var(--muted-foreground))]">{getReferenceHint(selectedPayee?.currency)}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Description + Memo - US Rails */}
+                {selectedAccount?.provider === 'rail_io' && (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Description</Label>
+                      <Input
+                        data-testid="payment-reference-input"
+                        placeholder="Payment description"
+                        value={reference}
+                        onChange={(e) => setReference(e.target.value)}
+                        className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                      />
+                    </div>
+                    {withdrawalRail === 'ACH' && (
+                      <div className="space-y-2">
+                        <Label className="text-sm">Memo <span className="text-[10px] text-[hsl(var(--muted-foreground))]">(max 10 chars)</span></Label>
+                        <Input
+                          placeholder="INV001"
+                          value={memo}
+                          onChange={(e) => setMemo(e.target.value.slice(0, 10))}
+                          maxLength={10}
+                          className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
               </div>
             )}
 
