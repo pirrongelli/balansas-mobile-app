@@ -27,9 +27,12 @@ export default function MfaVerifyPage() {
     })));
   }, [mfaFactors]);
 
-  const handleVerify = async (e) => {
-    e?.preventDefault();
-    if (code.length !== 6) {
+  const doVerify = useCallback(async (verifyCode) => {
+    if (isVerifyingRef.current) {
+      console.log('[MFA Page] Already verifying, skipping duplicate call');
+      return;
+    }
+    if (!verifyCode || verifyCode.length !== 6) {
       setError('Please enter the full 6-digit code');
       return;
     }
@@ -38,13 +41,16 @@ export default function MfaVerifyPage() {
       console.error('[MFA] No factor available. All factors:', mfaFactors);
       return;
     }
+    
+    isVerifyingRef.current = true;
     setIsLoading(true);
     setError('');
     try {
-      console.log('[MFA] Verifying factor:', factor.id, factor.factor_type, 'with code length:', code.length);
-      await verifyMfa(factor.id, code);
+      console.log('[MFA Page] Starting verification with code length:', verifyCode.length);
+      await verifyMfa(factor.id, verifyCode);
+      console.log('[MFA Page] Verification succeeded!');
     } catch (err) {
-      console.error('[MFA] Verify error:', err);
+      console.error('[MFA Page] Verification failed:', err);
       const msg = err.message || 'Invalid code. Please try again.';
       setError(
         msg.includes('Invalid TOTP') ? 'Invalid code. Please check your authenticator app and try again.' :
@@ -55,7 +61,13 @@ export default function MfaVerifyPage() {
       setCode('');
     } finally {
       setIsLoading(false);
+      isVerifyingRef.current = false;
     }
+  }, [factor, mfaFactors, verifyMfa]);
+
+  const handleVerify = async (e) => {
+    e?.preventDefault();
+    await doVerify(code);
   };
 
   // Auto-submit when 6 digits entered
