@@ -38,6 +38,10 @@ export default function PaymentsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState(null);
   const [feeData, setFeeData] = useState(null);
+  const [paymentScheme, setPaymentScheme] = useState('SCT');
+  const [withdrawalRail, setWithdrawalRail] = useState('ACH');
+  const [purpose, setPurpose] = useState('TRADE_TRANSACTIONS');
+  const [memo, setMemo] = useState('');
 
   const fetchData = useCallback(async () => {
     if (!customer?.id) return;
