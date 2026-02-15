@@ -191,10 +191,10 @@ export default function MfaVerifyPage() {
           </button>
         </div>
 
-        {/* Debug info - remove in production */}
-        {mfaFactors.length > 0 && (
-          <div className="mt-6 text-[9px] text-[hsl(var(--text-3))] text-center space-y-0.5">
-            <p>Factors: {mfaFactors.length} | Using: {factor?.factor_type || 'none'} ({factor?.status || 'none'})</p>
+        {/* Factor info */}
+        {factor && (
+          <div className="mt-6 text-[9px] text-[hsl(var(--text-3))] text-center">
+            <p>{factor.friendly_name || factorType.toUpperCase()}</p>
           </div>
         )}
       </div>
