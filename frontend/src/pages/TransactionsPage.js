@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeftRight, ArrowDownLeft, ArrowUpRight, Search, Filter, X } from 'lucide-react';
-import { formatCurrency, formatDate } from '@/lib/formatters';
+import { formatCurrency, formatDate, getTxDisplayName, isTxIncoming, formatTxType, normalizeStatus } from '@/lib/formatters';
 
 export default function TransactionsPage() {
   const { customer } = useAuth();
