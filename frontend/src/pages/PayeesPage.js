@@ -571,7 +571,7 @@ export default function PayeesPage() {
               className="w-full h-11 font-semibold"
               data-testid="payee-create-submit"
             >
-              {isCreating ? 'Creating...' : 'Create Payee'}
+              {isCreating ? (createProvider === 'fiat_republic' ? 'Creating Payee...' : 'Creating Counterparty...') : (createProvider === 'fiat_republic' ? 'Create Payee' : 'Create Counterparty')}
             </Button>
           </SheetFooter>
         </SheetContent>
