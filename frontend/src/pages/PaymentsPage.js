@@ -119,7 +119,7 @@ export default function PaymentsPage() {
         const paymentBody = {
           sourceAccountId: selectedAccount.fr_account_id || selectedAccount.id,
           payeeId: selectedPayee.fr_payee_id || selectedPayee.id,
-          amount: amount.toString(), // Must be a string decimal
+          amount: formatAmountForApi(amount),
           currency: selectedAccount.currency,
           reference: reference.trim(),
           paymentScheme: getPaymentScheme(selectedAccount.currency),
