@@ -152,12 +152,12 @@ export default function TeamPage() {
             onAction={canManage ? () => setShowInvite(true) : undefined}
           />
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {members.map((member, i) => (
               <div
                 key={member.id || i}
                 data-testid={`team-member-${i}`}
-                className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))]"
+                className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-3.5 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))]"
               >
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
@@ -169,9 +169,11 @@ export default function TeamPage() {
                     <p className="text-sm font-medium truncate">
                       {member.profiles?.email || 'User'}
                     </p>
-                    <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${getRoleColor(member.role)}`}>
+                    <div className="mt-1">
+                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${getRoleColor(member.role)}`}>
                       {(member.role || 'viewer').replace(/_/g, ' ')}
                     </Badge>
+                    </div>
                   </div>
                 </div>
                 {canManage && (

@@ -104,7 +104,7 @@ export default function MorePage() {
             <p className="text-xs text-[hsl(var(--muted-foreground))] font-medium mb-2 uppercase tracking-wider">
               {section.title}
             </p>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {section.items
                 .filter(item => !item.hide)
                 .map((item, ii) => (
@@ -112,7 +112,7 @@ export default function MorePage() {
                     key={ii}
                     data-testid={item.testId}
                     onClick={() => item.path !== '#' && navigate(item.path)}
-                    className="w-full flex items-center justify-between gap-3 rounded-xl px-3 py-3 hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] transition-colors duration-150"
+                    className="w-full flex items-center justify-between gap-3 rounded-xl px-3.5 py-3.5 hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] transition-colors duration-150"
                   >
                     <div className="flex items-center gap-3">
                       <item.icon className="h-5 w-5 text-[hsl(var(--muted-foreground))]" />

@@ -252,7 +252,7 @@ export default function DashboardPage() {
               description="Your activity will show up here"
             />
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-2">
               {transactions.map((tx, i) => {
                 const incoming = isTxIncoming(tx);
                 return (

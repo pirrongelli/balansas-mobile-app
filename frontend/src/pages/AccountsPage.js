@@ -103,13 +103,13 @@ export default function AccountsPage() {
                 description="Your fiat accounts will appear here"
               />
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {fiatAccounts.map((account, i) => (
                   <div
                     key={account.id || i}
                     data-testid={`account-row-${i}`}
                     onClick={() => navigate(`/accounts/${account.provider}/${account.id}`)}
-                    className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
+                    className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-3.5 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[hsl(var(--accent-teal)/0.12)] flex items-center justify-center text-xs font-bold text-[hsl(var(--accent-teal))]">
@@ -119,7 +119,7 @@ export default function AccountsPage() {
                         <p className="text-sm font-medium truncate max-w-[150px]">
                           {account.label || account.name || `${account.currency} Account`}
                         </p>
-                        <div className="flex items-center gap-1.5 mt-0.5">
+                        <div className="flex items-center gap-1.5 mt-1">
                           <ProviderBadge provider={account.provider} size="xs" />
                           {account.status && <StatusBadge status={account.status} />}
                         </div>
@@ -143,12 +143,12 @@ export default function AccountsPage() {
                 description="Crypto accounts from US Rails will appear here"
               />
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 {cryptoAccounts.map((account, i) => (
                   <div
                     key={account.id || i}
                     data-testid={`crypto-account-row-${i}`}
-                    className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
+                    className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-3.5 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[hsl(var(--provider-us)/0.12)] flex items-center justify-center text-xs font-bold text-[hsl(var(--provider-us))]">

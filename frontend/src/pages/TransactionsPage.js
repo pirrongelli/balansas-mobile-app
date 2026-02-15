@@ -179,14 +179,14 @@ export default function TransactionsPage() {
             description={search ? 'Try a different search term' : 'Your activity will show up here'}
           />
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-2">
             {filtered.map((tx, i) => {
               const incoming = isTxIncoming(tx);
               return (
                 <div
                   key={tx.id || i}
                   data-testid={`transaction-item-${i}`}
-                  className="flex items-start justify-between gap-3 rounded-xl px-3 py-3 hover:bg-[hsl(var(--accent))] transition-colors duration-150"
+                  className="flex items-start justify-between gap-3 rounded-xl px-3.5 py-3.5 hover:bg-[hsl(var(--accent))] bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] transition-colors duration-150"
                 >
                   <div className="flex items-start gap-3">
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${

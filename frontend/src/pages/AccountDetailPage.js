@@ -128,11 +128,11 @@ export default function AccountDetailPage() {
           <Card className="bg-[hsl(var(--card))] border-[hsl(var(--border))]">
             <CardContent className="pt-4 pb-4">
               <h3 className="text-sm font-semibold mb-3">Banking Details</h3>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {bankingDetails.map(detail => (
-                  <div key={detail.label} className="flex items-center justify-between">
+                  <div key={detail.label} className="flex items-center justify-between py-1.5">
                     <div className="min-w-0 flex-1">
-                      <p className="text-[10px] text-[hsl(var(--muted-foreground))] uppercase tracking-wider">{detail.label}</p>
+                      <p className="text-[10px] text-[hsl(var(--muted-foreground))] uppercase tracking-wider mb-0.5">{detail.label}</p>
                       <p className="text-sm font-medium tabular-nums truncate">{detail.value}</p>
                     </div>
                     <Button
@@ -162,7 +162,7 @@ export default function AccountDetailPage() {
               <p className="text-sm text-[hsl(var(--muted-foreground))]">No transactions yet</p>
             </div>
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-2">
               {transactions.slice(0, 10).map((tx, i) => {
                 const incoming = isTxIncoming(tx);
                 return (

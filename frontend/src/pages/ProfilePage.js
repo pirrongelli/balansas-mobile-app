@@ -37,17 +37,17 @@ export default function ProfilePage() {
     <div data-testid="profile-page">
       <TopHeader title="Profile" showBack />
 
-      <div className="px-4 pt-5 space-y-4">
+      <div className="px-4 pt-5 space-y-5">
         {/* Profile Header */}
-        <div className="flex flex-col items-center py-4">
-          <Avatar className="h-20 w-20 mb-3">
+        <div className="flex flex-col items-center py-5">
+          <Avatar className="h-20 w-20 mb-4">
             <AvatarFallback className="bg-[hsl(var(--accent-teal)/0.12)] text-[hsl(var(--accent-teal))] text-xl font-semibold">
               {getInitials(displayName)}
             </AvatarFallback>
           </Avatar>
           <h2 className="text-lg font-semibold" data-testid="profile-name">{displayName}</h2>
-          <p className="text-sm text-[hsl(var(--muted-foreground))]">{user?.email}</p>
-          <div className="flex items-center gap-2 mt-2">
+          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1">{user?.email}</p>
+          <div className="flex items-center gap-2 mt-3">
             <Badge variant="outline" className="text-[10px] bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
               {customer?.customer_type?.replace(/_/g, ' ') || 'Customer'}
             </Badge>
