@@ -41,6 +41,10 @@ export default function AccountsPage() {
         ...(railAccounts || []).map(a => ({ ...a, provider: 'rail_io' })),
       ];
       setFiatAccounts(allFiat);
+      
+      // Debug: log first account to see available fields
+      if (frAccounts?.length > 0) console.log('[DEBUG] FR account fields:', Object.keys(frAccounts[0]), JSON.stringify(frAccounts[0], null, 2));
+      if (railAccounts?.length > 0) console.log('[DEBUG] Rail account fields:', Object.keys(railAccounts[0]), JSON.stringify(railAccounts[0], null, 2));
 
       const { data: cryptoData } = await supabase
         .from('rail_crypto_accounts')
