@@ -309,7 +309,7 @@ export default function PayeesPage() {
             {createError && (
               <div className="flex items-center gap-2 text-sm text-[hsl(var(--status-danger))] bg-[hsl(var(--status-danger)/0.08)] rounded-lg px-3 py-2">
                 <AlertCircle className="h-4 w-4" />
-                {createError}}
+                {createError}
               </div>
             )}
             <div className="space-y-2">
