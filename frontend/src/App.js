@@ -1,53 +1,104 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { AppShell } from '@/components/layout/AppShell';
+import { Toaster } from '@/components/ui/sonner';
+import LoginPage from '@/pages/LoginPage';
+import MfaVerifyPage from '@/pages/MfaVerifyPage';
+import DashboardPage from '@/pages/DashboardPage';
+import AccountsPage from '@/pages/AccountsPage';
+import AccountDetailPage from '@/pages/AccountDetailPage';
+import TransactionsPage from '@/pages/TransactionsPage';
+import PaymentsPage from '@/pages/PaymentsPage';
+import PayeesPage from '@/pages/PayeesPage';
+import MorePage from '@/pages/MorePage';
+import ProfilePage from '@/pages/ProfilePage';
+import TeamPage from '@/pages/TeamPage';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+const ProtectedRoute = ({ children }) => {
+  const { session, loading, mfaRequired } = useAuth();
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-[hsl(var(--accent-teal))] border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-[hsl(var(--muted-foreground))]">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+  if (!session) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (mfaRequired) {
+    return <Navigate to="/mfa-verify" replace />;
+  }
+
+  return children;
+};
+
+const AuthRoute = ({ children }) => {
+  const { session, loading, mfaRequired } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-2 border-[hsl(var(--accent-teal))] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (session && !mfaRequired) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+const AppContent = () => {
+  const location = useLocation();
+  const isAuthPage = ['/login', '/mfa-verify'].includes(location.pathname);
 
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
+    <>
+      <Routes>
+        {/* Auth routes - no shell */}
+        <Route path="/login" element={<AuthRoute><LoginPage /></AuthRoute>} />
+        <Route path="/mfa-verify" element={<MfaVerifyPage />} />
+
+        {/* Protected routes - with shell */}
+        <Route path="/" element={<ProtectedRoute><AppShell><DashboardPage /></AppShell></ProtectedRoute>} />
+        <Route path="/accounts" element={<ProtectedRoute><AppShell><AccountsPage /></AppShell></ProtectedRoute>} />
+        <Route path="/accounts/:provider/:accountId" element={<ProtectedRoute><AppShell><AccountDetailPage /></AppShell></ProtectedRoute>} />
+        <Route path="/transactions" element={<ProtectedRoute><AppShell><TransactionsPage /></AppShell></ProtectedRoute>} />
+        <Route path="/payments" element={<ProtectedRoute><AppShell><PaymentsPage /></AppShell></ProtectedRoute>} />
+        <Route path="/payees" element={<ProtectedRoute><AppShell><PayeesPage /></AppShell></ProtectedRoute>} />
+        <Route path="/more" element={<ProtectedRoute><AppShell><MorePage /></AppShell></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><AppShell><ProfilePage /></AppShell></ProtectedRoute>} />
+        <Route path="/team" element={<ProtectedRoute><AppShell><TeamPage /></AppShell></ProtectedRoute>} />
+
+        {/* Catch-all */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          className: 'bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border-[hsl(var(--border))]',
+        }}
+      />
+    </>
   );
 };
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
