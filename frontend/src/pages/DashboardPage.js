@@ -68,12 +68,6 @@ export default function DashboardPage() {
         ...(railTx || []).map(t => ({ ...t, provider: 'rail_io' })),
       ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 5);
       setTransactions(allTx);
-      
-      // Debug: log first transaction to see field names
-      if (allTx.length > 0) {
-        console.log('[DEBUG] Sample transaction fields:', Object.keys(allTx[0]));
-        console.log('[DEBUG] Sample transaction data:', JSON.stringify(allTx[0], null, 2));
-      }
     } catch (err) {
       setError(err.message);
     } finally {
