@@ -307,6 +307,18 @@ export default function PayeesPage() {
               </button>
             </div>
 
+            {/* US Rails: Full wizard */}
+            {createProvider === 'rail_io' && (
+              <RailCounterpartyWizard
+                customerId={customer.id}
+                onSuccess={() => { setShowCreate(false); fetchPayees(); }}
+                onCancel={() => setShowCreate(false)}
+              />
+            )}
+
+            {/* EU Rails: Payee form */}
+            {createProvider === 'fiat_republic' && (
+            <>
             {createError && (
               <div className="flex items-center gap-2 text-sm text-[hsl(var(--status-danger))] bg-[hsl(var(--status-danger)/0.08)] rounded-lg px-3 py-2">
                 <AlertCircle className="h-4 w-4" />
