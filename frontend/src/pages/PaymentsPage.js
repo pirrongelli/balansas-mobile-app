@@ -82,11 +82,11 @@ export default function PaymentsPage() {
     try {
       const { data, error: feeErr } = await supabase.functions.invoke('calculate-fee', {
         body: {
-          amount: formatAmountForApi(amount),
+          customer_id: customer.id,
+          transaction_type: 'PAYMENT',
           currency: selectedAccount.currency,
-          transactionType: 'PAYMENT',
+          amount: formatAmountForApi(amount),
           provider: selectedAccount.provider === 'fiat_republic' ? 'fiat_republic' : 'rail_io',
-          customerId: customer.id,
         },
       });
       if (feeErr || data?.error) {
