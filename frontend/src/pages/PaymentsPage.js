@@ -282,9 +282,14 @@ export default function PaymentsPage() {
     }
   };
 
-  // Filter accounts to match the selected payee's currency
+  // Filter accounts to match the selected payee's currency AND provider
   const matchingAccounts = selectedPayee
-    ? accounts.filter(a => a.currency === selectedPayee.currency)
+    ? accounts.filter(a => {
+        const currencyMatch = a.currency === selectedPayee.currency;
+        // Also match provider: EU payees use EU accounts, US counterparties use US accounts
+        const providerMatch = !selectedPayee.provider || a.provider === selectedPayee.provider;
+        return currencyMatch && providerMatch;
+      })
     : accounts;
 
   const handleNext = () => {
