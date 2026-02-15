@@ -89,7 +89,7 @@ export default function PayeesPage() {
   const filtered = payees.filter(p => {
     if (!search) return true;
     const s = search.toLowerCase();
-    return (p.name || '').toLowerCase().includes(s) || (p.label || '').toLowerCase().includes(s);
+    return (p.payee_name || '').toLowerCase().includes(s) || (p.bank_name || '').toLowerCase().includes(s) || (p.account_number || '').toLowerCase().includes(s);
   });
 
   if (loading) return (
