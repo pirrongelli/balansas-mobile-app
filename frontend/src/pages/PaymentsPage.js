@@ -125,8 +125,14 @@ export default function PaymentsPage() {
           paymentScheme: getPaymentScheme(selectedAccount.currency),
         };
 
-        console.log('[Payment] FR payload:', paymentBody);
-        const { data, error: payErr } = await supabase.functions.invoke('fr-proxy', {
+        console.log('[Payment] FR full request:', {
+          endpoint: '/api/v1/payments',
+          method: 'POST',
+          customerId: customer.id,
+          body: paymentBody,
+        });
+
+        const response = await supabase.functions.invoke('fr-proxy', {
           body: {
             endpoint: '/api/v1/payments',
             method: 'POST',
@@ -135,12 +141,29 @@ export default function PaymentsPage() {
           },
         });
         
-        // Check for errors in response body
-        if (payErr) throw payErr;
-        if (data?.error || data?.errorCode) {
-          throw new Error(data.message || data.error || 'Payment failed');
+        console.log('[Payment] FR response:', response);
+        
+        // Handle edge function errors - try to get response body
+        if (response.error) {
+          let errorDetail = response.error.message;
+          // Try to read the response context for more details
+          if (response.error.context) {
+            try {
+              const body = await response.error.context.json();
+              console.log('[Payment] FR error body:', body);
+              errorDetail = body?.message || body?.error || JSON.stringify(body?.warnings || body);
+            } catch { /* ignore */ }
+          }
+          throw new Error(errorDetail);
         }
-        setSubmitResult({ success: true, data });
+        
+        if (response.data?.error || response.data?.errorCode) {
+          const msg = response.data.message || response.data.error;
+          const warnings = response.data.warnings?.map(w => `${w.position}: ${w.issue}`).join(', ');
+          throw new Error(warnings || msg || 'Payment failed');
+        }
+        
+        setSubmitResult({ success: true, data: response.data });
       } else {
         // US Rails - Rail.io withdrawal
         const withdrawalBody = {
@@ -151,8 +174,14 @@ export default function PaymentsPage() {
           purpose: reference.trim(),
         };
 
-        console.log('[Payment] Rail payload:', withdrawalBody);
-        const { data, error: payErr } = await supabase.functions.invoke('rail-proxy', {
+        console.log('[Payment] Rail full request:', {
+          customerId: customer.id,
+          endpoint: '/withdrawals',
+          method: 'POST',
+          body: withdrawalBody,
+        });
+
+        const response = await supabase.functions.invoke('rail-proxy', {
           body: {
             customerId: customer.id,
             endpoint: '/withdrawals',
@@ -161,15 +190,30 @@ export default function PaymentsPage() {
           },
         });
         
-        if (payErr) throw payErr;
-        if (data?.error || data?.errorCode) {
-          throw new Error(data.message || data.error || 'Payment failed');
+        console.log('[Payment] Rail response:', response);
+        
+        if (response.error) {
+          let errorDetail = response.error.message;
+          if (response.error.context) {
+            try {
+              const body = await response.error.context.json();
+              console.log('[Payment] Rail error body:', body);
+              errorDetail = body?.message || body?.error || JSON.stringify(body);
+            } catch { /* ignore */ }
+          }
+          throw new Error(errorDetail);
         }
-        setSubmitResult({ success: true, data });
+        
+        if (response.data?.error || response.data?.errorCode) {
+          throw new Error(response.data.message || response.data.error || 'Payment failed');
+        }
+        
+        setSubmitResult({ success: true, data: response.data });
       }
       toast.success('Payment created successfully');
     } catch (err) {
       const errorMsg = typeof err === 'string' ? err : (err.message || 'Payment failed');
+      console.error('[Payment] Error:', errorMsg);
       setSubmitResult({ success: false, error: errorMsg });
       toast.error('Payment failed', { description: errorMsg });
     } finally {
