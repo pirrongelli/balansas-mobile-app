@@ -23,6 +23,7 @@ export function AuthProvider({ children }) {
         signOut();
       }, SESSION_TIMEOUT);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   useEffect(() => {
