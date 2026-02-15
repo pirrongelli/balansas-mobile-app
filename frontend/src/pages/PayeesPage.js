@@ -278,11 +278,11 @@ export default function PayeesPage() {
               <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] mb-3 uppercase tracking-wider">Address</p>
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <Label className="text-sm">Address Line</Label>
+                  <Label className="text-sm">Address Line <span className="text-[hsl(var(--status-danger))]">*</span></Label>
                   <Input
                     placeholder="123 Main Street"
-                    value={form.addressLine1}
-                    onChange={(e) => setForm(f => ({ ...f, addressLine1: e.target.value }))}
+                    value={form.line1}
+                    onChange={(e) => setForm(f => ({ ...f, line1: e.target.value }))}
                     className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
                   />
                 </div>
@@ -307,14 +307,53 @@ export default function PayeesPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm">Country Code</Label>
-                  <Input
-                    placeholder="GB, DE, US..."
-                    value={form.country}
-                    onChange={(e) => setForm(f => ({ ...f, country: e.target.value.toUpperCase() }))}
-                    maxLength={2}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
-                  />
+                  <Label className="text-sm">Country</Label>
+                  <Select value={form.country} onValueChange={(v) => setForm(f => ({ ...f, country: v }))}>
+                    <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
+                      <SelectValue placeholder="Select country" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[200px]">
+                      <SelectItem value="GB">United Kingdom</SelectItem>
+                      <SelectItem value="DE">Germany</SelectItem>
+                      <SelectItem value="FR">France</SelectItem>
+                      <SelectItem value="ES">Spain</SelectItem>
+                      <SelectItem value="IT">Italy</SelectItem>
+                      <SelectItem value="NL">Netherlands</SelectItem>
+                      <SelectItem value="BE">Belgium</SelectItem>
+                      <SelectItem value="AT">Austria</SelectItem>
+                      <SelectItem value="IE">Ireland</SelectItem>
+                      <SelectItem value="PT">Portugal</SelectItem>
+                      <SelectItem value="FI">Finland</SelectItem>
+                      <SelectItem value="SE">Sweden</SelectItem>
+                      <SelectItem value="DK">Denmark</SelectItem>
+                      <SelectItem value="NO">Norway</SelectItem>
+                      <SelectItem value="CH">Switzerland</SelectItem>
+                      <SelectItem value="PL">Poland</SelectItem>
+                      <SelectItem value="CZ">Czech Republic</SelectItem>
+                      <SelectItem value="LT">Lithuania</SelectItem>
+                      <SelectItem value="LV">Latvia</SelectItem>
+                      <SelectItem value="EE">Estonia</SelectItem>
+                      <SelectItem value="LU">Luxembourg</SelectItem>
+                      <SelectItem value="MT">Malta</SelectItem>
+                      <SelectItem value="CY">Cyprus</SelectItem>
+                      <SelectItem value="GR">Greece</SelectItem>
+                      <SelectItem value="BG">Bulgaria</SelectItem>
+                      <SelectItem value="RO">Romania</SelectItem>
+                      <SelectItem value="HR">Croatia</SelectItem>
+                      <SelectItem value="SI">Slovenia</SelectItem>
+                      <SelectItem value="SK">Slovakia</SelectItem>
+                      <SelectItem value="HU">Hungary</SelectItem>
+                      <SelectItem value="US">United States</SelectItem>
+                      <SelectItem value="CA">Canada</SelectItem>
+                      <SelectItem value="AU">Australia</SelectItem>
+                      <SelectItem value="MX">Mexico</SelectItem>
+                      <SelectItem value="AE">UAE</SelectItem>
+                      <SelectItem value="SG">Singapore</SelectItem>
+                      <SelectItem value="HK">Hong Kong</SelectItem>
+                      <SelectItem value="JP">Japan</SelectItem>
+                      <SelectItem value="BR">Brazil</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
