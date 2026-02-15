@@ -57,19 +57,36 @@ export default function PayeesPage() {
       const body = {
         name: form.name,
         currency: form.currency,
+        type: form.type,
+        address: {
+          addressLine1: form.addressLine1 || 'N/A',
+          city: form.city || 'N/A',
+          country: form.country || 'GB',
+          postalCode: form.postalCode || 'N/A',
+        },
+        bankDetails: {},
       };
+
       if (form.currency === 'EUR') {
-        body.iban = form.iban;
-        body.bic = form.bic;
+        body.bankDetails = {
+          iban: form.iban,
+          bic: form.bic || undefined,
+        };
       } else if (form.currency === 'GBP') {
-        body.accountNumber = form.accountNumber;
-        body.sortCode = form.sortCode;
+        body.bankDetails = {
+          accountNumber: form.accountNumber,
+          sortCode: form.sortCode,
+        };
       } else {
-        body.accountNumber = form.accountNumber;
-        body.routingNumber = form.routingNumber;
+        body.bankDetails = {
+          accountNumber: form.accountNumber,
+          routingNumber: form.routingNumber,
+        };
       }
 
-      const { data, error: createErr } = await supabase.functions.invoke('fr-proxy', {
+      console.log('[Payee] Create payload:', body);
+
+      const response = await supabase.functions.invoke('fr-proxy', {
         body: {
           endpoint: '/api/v1/payees',
           method: 'POST',
@@ -77,10 +94,31 @@ export default function PayeesPage() {
           body,
         },
       });
-      if (createErr) throw createErr;
+
+      if (response.error) {
+        let errorDetail = response.error.message;
+        if (response.error.context) {
+          try {
+            const errBody = await response.error.context.json();
+            console.log('[Payee] Error body:', errBody);
+            const warnings = errBody?.warnings?.map(w => `${w.position}: ${w.issue}`).join(', ');
+            errorDetail = warnings || errBody?.message || errorDetail;
+          } catch { /* ignore */ }
+        }
+        throw new Error(errorDetail);
+      }
+
+      if (response.data?.errorCode) {
+        const warnings = response.data.warnings?.map(w => `${w.position}: ${w.issue}`).join(', ');
+        throw new Error(warnings || response.data.message);
+      }
+
       toast.success('Payee created successfully');
       setShowCreate(false);
-      setForm({ name: '', currency: 'EUR', iban: '', bic: '', accountNumber: '', sortCode: '', routingNumber: '' });
+      setForm({ 
+        name: '', currency: 'EUR', iban: '', bic: '', accountNumber: '', sortCode: '', routingNumber: '',
+        type: 'INDIVIDUAL', addressLine1: '', city: '', country: '', postalCode: ''
+      });
       fetchPayees();
     } catch (err) {
       setCreateError(err.message || 'Failed to create payee');
