@@ -25,7 +25,7 @@ export default function PayeesPage() {
   const [createError, setCreateError] = useState('');
   const [form, setForm] = useState({ 
     name: '', currency: 'EUR', iban: '', bic: '', accountNumber: '', sortCode: '', routingNumber: '',
-    type: 'INDIVIDUAL', addressLine1: '', city: '', country: '', postalCode: ''
+    type: 'PERSON', line1: '', city: '', country: 'GB', postalCode: ''
   });
 
   const fetchPayees = useCallback(async () => {
