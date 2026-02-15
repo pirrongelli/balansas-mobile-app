@@ -302,34 +302,45 @@ export default function PaymentsPage() {
           <div className="space-y-4 py-2">
             {/* Step 0: Select Payee */}
             {step === 0 && (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label className="text-sm">Choose a payee</Label>
                 {payees.length === 0 ? (
                   <p className="text-sm text-[hsl(var(--muted-foreground))] py-4 text-center">No payees available</p>
                 ) : (
-                  payees.map((payee, i) => (
-                    <div
-                      key={payee.id || i}
-                      data-testid={`wizard-payee-${i}`}
-                      onClick={() => setSelectedPayee(payee)}
-                      className={`flex items-center gap-3 rounded-xl px-3 py-3 border cursor-pointer transition-colors duration-150 ${
-                        selectedPayee?.id === payee.id
-                          ? 'border-[hsl(var(--accent-teal))] bg-[hsl(var(--accent-teal)/0.08)]'
-                          : 'border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))]'
-                      }`}
-                    >
-                      <div className="w-9 h-9 rounded-full bg-[hsl(var(--surface-2))] flex items-center justify-center text-xs font-bold">
-                        {getPayeeName(payee).slice(0, 2).toUpperCase()}
+                  <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+                    {payees.map((payee, i) => (
+                      <div
+                        key={payee.id || i}
+                        data-testid={`wizard-payee-${i}`}
+                        onClick={() => {
+                          setSelectedPayee(payee);
+                          // Reset account if currency changed
+                          if (selectedAccount && selectedAccount.currency !== payee.currency) {
+                            setSelectedAccount(null);
+                          }
+                        }}
+                        className={`flex items-center gap-3 rounded-xl px-3.5 py-3.5 border cursor-pointer transition-colors duration-150 ${
+                          selectedPayee?.id === payee.id
+                            ? 'border-[hsl(var(--accent-teal))] bg-[hsl(var(--accent-teal)/0.08)]'
+                            : 'border-[hsl(var(--border))] bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))]'
+                        }`}
+                      >
+                        <div className="w-10 h-10 rounded-full bg-[hsl(var(--surface-2))] flex items-center justify-center text-xs font-bold flex-shrink-0">
+                          {getPayeeName(payee).slice(0, 2).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{getPayeeName(payee)}</p>
+                          <p className="text-[10px] text-[hsl(var(--muted-foreground))] mt-0.5">
+                            {payee.currency}{payee.bank_name ? ` • ${payee.bank_name}` : ''}
+                            {payee.account_number ? ` • ${payee.account_number.slice(0, 4)}...${payee.account_number.slice(-4)}` : ''}
+                          </p>
+                        </div>
+                        {selectedPayee?.id === payee.id && (
+                          <Check className="h-5 w-5 text-[hsl(var(--accent-teal))] flex-shrink-0" />
+                        )}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{getPayeeName(payee)}</p>
-                        <p className="text-[10px] text-[hsl(var(--muted-foreground))]">{payee.currency}</p>
-                      </div>
-                      {selectedPayee?.id === payee.id && (
-                        <Check className="h-5 w-5 text-[hsl(var(--accent-teal))]" />
-                      )}
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 )}
               </div>
             )}
@@ -337,23 +348,32 @@ export default function PaymentsPage() {
             {/* Step 1: Amount */}
             {step === 1 && (
               <div className="space-y-4">
+                {selectedPayee && (
+                  <div className="bg-[hsl(var(--accent-teal)/0.06)] border border-[hsl(var(--accent-teal)/0.15)] rounded-lg px-3 py-2 text-xs text-[hsl(var(--accent-teal))]">
+                    Sending to <span className="font-semibold">{getPayeeName(selectedPayee)}</span> in <span className="font-semibold">{selectedPayee.currency}</span>
+                  </div>
+                )}
                 <div className="space-y-2">
-                  <Label className="text-sm">Source Account</Label>
-                  <Select
-                    value={selectedAccount?.id || ''}
-                    onValueChange={(val) => setSelectedAccount(accounts.find(a => a.id === val))}
-                  >
-                    <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]" data-testid="payment-account-select">
-                      <SelectValue placeholder="Select account" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {accounts.map(acc => (
-                        <SelectItem key={acc.id} value={acc.id}>
-                          {acc.label || acc.name || acc.currency} - {formatCurrency(acc.balance, acc.currency)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label className="text-sm">Source Account ({selectedPayee?.currency || ''})</Label>
+                  {matchingAccounts.length === 0 ? (
+                    <p className="text-sm text-[hsl(var(--status-warning))] py-2">No accounts available in {selectedPayee?.currency}</p>
+                  ) : (
+                    <Select
+                      value={selectedAccount?.id || ''}
+                      onValueChange={(val) => setSelectedAccount(matchingAccounts.find(a => a.id === val))}
+                    >
+                      <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]" data-testid="payment-account-select">
+                        <SelectValue placeholder="Select account" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {matchingAccounts.map(acc => (
+                          <SelectItem key={acc.id} value={acc.id}>
+                            {acc.label || acc.name || acc.currency} - {formatCurrency(acc.balance, acc.currency)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label className="text-sm">Amount</Label>
@@ -374,14 +394,17 @@ export default function PaymentsPage() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm">Reference (optional)</Label>
+                  <Label className="text-sm">Reference <span className="text-[hsl(var(--status-danger))]">*</span></Label>
                   <Input
                     data-testid="payment-reference-input"
-                    placeholder="Payment reference"
+                    placeholder="Payment reference (required)"
                     value={reference}
                     onChange={(e) => setReference(e.target.value)}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                    className={`h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))] ${!reference.trim() && amount ? 'border-[hsl(var(--status-warning)/0.5)]' : ''}`}
                   />
+                  {!reference.trim() && amount && (
+                    <p className="text-[10px] text-[hsl(var(--status-warning))]">Reference is required to proceed</p>
+                  )}
                 </div>
               </div>
             )}
