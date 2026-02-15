@@ -117,10 +117,27 @@ export default function PaymentsPage() {
   const getReferenceHint = (currency) => {
     switch ((currency || '').toUpperCase()) {
       case 'USD': return 'Min 6 alphanumeric chars, max 17. Not all the same character.';
-      case 'GBP': return 'Max 18 characters';
+      case 'GBP': return 'Min 6 alphanumeric chars, max 17. Not all the same character.';
       case 'EUR': return 'Max 140 characters';
       default: return '';
     }
+  };
+
+  const isReferenceValid = (ref, currency) => {
+    if (!ref || !ref.trim()) return false;
+    const cur = (currency || '').toUpperCase();
+    if (cur === 'USD' || cur === 'GBP') {
+      // Strip optional chars (space, hyphen, dot, ampersand, slash) to count alphanumeric
+      const alphanumOnly = ref.replace(/[\s\-\.&\/]/g, '');
+      if (alphanumOnly.length < 6) return false;
+      if (ref.length > 17) return false;
+      // Check not all the same character
+      if (new Set(alphanumOnly.toLowerCase()).size <= 1) return false;
+      // Check alphanumeric only (plus allowed special chars)
+      if (!/^[a-zA-Z0-9\s\-\.&\/]+$/.test(ref)) return false;
+      return true;
+    }
+    return ref.trim().length > 0;
   };
 
   const handleSubmitPayment = async () => {
