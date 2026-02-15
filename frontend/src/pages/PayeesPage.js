@@ -253,7 +253,7 @@ export default function PayeesPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="INDIVIDUAL">Individual</SelectItem>
+                    <SelectItem value="PERSON">Individual</SelectItem>
                     <SelectItem value="BUSINESS">Business</SelectItem>
                   </SelectContent>
                 </Select>
