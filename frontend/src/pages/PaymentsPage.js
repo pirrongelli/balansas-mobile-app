@@ -501,8 +501,12 @@ export default function PaymentsPage() {
                     placeholder="Payment reference (required)"
                     value={reference}
                     onChange={(e) => setReference(e.target.value)}
+                    maxLength={selectedPayee?.currency === 'USD' ? 17 : 140}
                     className={`h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))] ${!reference.trim() && amount ? 'border-[hsl(var(--status-warning)/0.5)]' : ''}`}
                   />
+                  {getReferenceHint(selectedPayee?.currency) && (
+                    <p className="text-[10px] text-[hsl(var(--muted-foreground))]">{getReferenceHint(selectedPayee?.currency)}</p>
+                  )}
                   {!reference.trim() && amount && (
                     <p className="text-[10px] text-[hsl(var(--status-warning))]">Reference is required to proceed</p>
                   )}
