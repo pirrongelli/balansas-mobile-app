@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
-import { ShieldCheck, AlertCircle, Smartphone, KeyRound, Loader2 } from 'lucide-react';
+import { ShieldCheck, AlertCircle, KeyRound, Loader2 } from 'lucide-react';
 
 export default function MfaVerifyPage() {
   const { mfaFactors, verifyMfa, signOut } = useAuth();
@@ -11,82 +11,57 @@ export default function MfaVerifyPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const isVerifyingRef = useRef(false);
+  const hasSucceededRef = useRef(false);
 
-  // Find the best factor to use - prefer TOTP, then phone
   const totpFactors = mfaFactors.filter(f => f.factor_type === 'totp' && f.status === 'verified');
   const phoneFactors = mfaFactors.filter(f => f.factor_type === 'phone' && f.status === 'verified');
   const allVerified = [...totpFactors, ...phoneFactors];
-  const factor = allVerified[0] || mfaFactors[0]; // Fallback to first available
-
+  const factor = allVerified[0] || mfaFactors[0];
   const factorType = factor?.factor_type || 'totp';
   const isPhone = factorType === 'phone';
 
-  useEffect(() => {
-    console.log('[MFA Page] Factors available:', mfaFactors.length, mfaFactors.map(f => ({
-      id: f.id, type: f.factor_type, status: f.status, friendly: f.friendly_name
-    })));
-  }, [mfaFactors]);
-
   const doVerify = useCallback(async (verifyCode) => {
-    if (isVerifyingRef.current) {
-      console.log('[MFA Page] Already verifying, skipping duplicate call');
+    // Strict guard: only one verification at a time, and stop after success
+    if (isVerifyingRef.current || hasSucceededRef.current) return;
+    if (!verifyCode || verifyCode.length !== 6 || !factor) {
+      if (!factor) setError('No MFA factor found.');
       return;
     }
-    if (!verifyCode || verifyCode.length !== 6) {
-      setError('Please enter the full 6-digit code');
-      return;
-    }
-    if (!factor) {
-      setError('No MFA factor found. Please contact support.');
-      console.error('[MFA] No factor available. All factors:', mfaFactors);
-      return;
-    }
-    
+
     isVerifyingRef.current = true;
     setIsLoading(true);
     setError('');
     try {
-      console.log('[MFA Page] Starting verification with code length:', verifyCode.length);
       await verifyMfa(factor.id, verifyCode);
-      console.log('[MFA Page] Verification succeeded!');
+      hasSucceededRef.current = true; // Prevent any further calls
     } catch (err) {
-      console.error('[MFA Page] Verification failed:', err);
-      const msg = err.message || 'Invalid code. Please try again.';
+      const msg = err.message || '';
       setError(
-        msg.includes('Invalid TOTP') ? 'Invalid code. Please check your authenticator app and try again.' :
+        msg.includes('Invalid TOTP') ? 'Invalid code. Check your authenticator app.' :
         msg.includes('body stream') ? 'Verification failed. Please try again.' :
-        msg.includes('expired') ? 'Code expired. Please enter a new code.' :
-        msg
+        msg.includes('expired') ? 'Code expired. Enter a new code.' :
+        msg || 'Invalid code. Please try again.'
       );
       setCode('');
     } finally {
       setIsLoading(false);
       isVerifyingRef.current = false;
     }
-  }, [factor, mfaFactors, verifyMfa]);
+  }, [factor, verifyMfa]);
 
-  const handleVerify = async (e) => {
+  const handleSubmit = (e) => {
     e?.preventDefault();
-    await doVerify(code);
+    doVerify(code);
   };
 
-  // Auto-submit when 6 digits entered
   const handleCodeChange = (value) => {
     setCode(value);
     setError('');
-  };
-
-  // Auto-submit when 6 digits entered
-  useEffect(() => {
-    if (code.length === 6 && factor && !isLoading && !isVerifyingRef.current) {
-      console.log('[MFA Page] Auto-submitting code of length:', code.length);
-      const timer = setTimeout(() => {
-        doVerify(code);
-      }, 300);
-      return () => clearTimeout(timer);
+    // Auto-submit on 6 digits
+    if (value.length === 6) {
+      setTimeout(() => doVerify(value), 200);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code]);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background relative overflow-hidden" data-testid="mfa-verify-page">
@@ -109,22 +84,17 @@ export default function MfaVerifyPage() {
               : 'Enter the 6-digit code from your authenticator app'
             }
           </p>
-          {factor && (
+          {factor?.friendly_name && (
             <div className="flex items-center gap-1.5 mt-2">
-              {isPhone
-                ? <Smartphone className="h-3.5 w-3.5 text-[hsl(var(--muted-foreground))]" />
-                : <KeyRound className="h-3.5 w-3.5 text-[hsl(var(--muted-foreground))]" />
-              }
-              <span className="text-[10px] text-[hsl(var(--muted-foreground))]">
-                {factor.friendly_name || factorType.toUpperCase()}
-              </span>
+              <KeyRound className="h-3.5 w-3.5 text-[hsl(var(--muted-foreground))]" />
+              <span className="text-[10px] text-[hsl(var(--muted-foreground))]">{factor.friendly_name}</span>
             </div>
           )}
         </div>
 
         <Card className="w-full bg-[hsl(var(--card))] border-[hsl(var(--border))] shadow-[0_10px_30px_hsl(var(--shadow-color)/0.35)]">
           <CardContent className="pt-6 pb-6 px-5">
-            <form onSubmit={handleVerify} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
                 <div data-testid="mfa-error" className="flex items-center gap-2 text-sm text-[hsl(var(--status-danger))] bg-[hsl(var(--status-danger)/0.08)] border border-[hsl(var(--status-danger)/0.2)] rounded-lg px-3 py-2.5">
                   <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -135,7 +105,7 @@ export default function MfaVerifyPage() {
               {!factor && mfaFactors.length === 0 && (
                 <div className="text-center py-2">
                   <Loader2 className="h-5 w-5 animate-spin text-[hsl(var(--muted-foreground))] mx-auto mb-2" />
-                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Loading MFA factors...</p>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Loading...</p>
                 </div>
               )}
 
@@ -190,13 +160,6 @@ export default function MfaVerifyPage() {
             Sign in with a different account
           </button>
         </div>
-
-        {/* Factor info */}
-        {factor && (
-          <div className="mt-6 text-[9px] text-[hsl(var(--text-3))] text-center">
-            <p>{factor.friendly_name || factorType.toUpperCase()}</p>
-          </div>
-        )}
       </div>
     </div>
   );
