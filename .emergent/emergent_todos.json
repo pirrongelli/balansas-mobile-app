@@ -1,18 +1,18 @@
 [
   {
     "content": "Rebuild EU Rails payee form with USD ACH/SWIFT support and state field",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Build US Rails 5-step counterparty wizard (Account → Profile → Address → Bank → Institution)",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Add proper validation (BIC regex, E.164 phone, address 35 char limit)",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Test both creation flows",
-    "status": "pending"
+    "status": "in_progress"
   }
 ]
