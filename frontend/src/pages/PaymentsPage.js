@@ -703,12 +703,20 @@ export default function PaymentsPage() {
                   )}
                   <div className="flex justify-between">
                     <span className="text-xs text-[hsl(var(--muted-foreground))]">Reference</span>
-                    <span className="text-sm">{reference}</span>
+                    <span className="text-sm">{reference || '-'}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-xs text-[hsl(var(--muted-foreground))]">Payment Scheme</span>
-                    <span className="text-xs font-medium text-[hsl(var(--foreground))]">{getPaymentScheme(selectedAccount?.currency)}</span>
+                    <span className="text-xs text-[hsl(var(--muted-foreground))]">{selectedAccount?.provider === 'rail_io' ? 'Payment Rail' : 'Payment Scheme'}</span>
+                    <span className="text-xs font-medium text-[hsl(var(--foreground))]">
+                      {selectedAccount?.provider === 'rail_io' ? withdrawalRail : paymentScheme}
+                    </span>
                   </div>
+                  {selectedAccount?.provider === 'rail_io' && (
+                    <div className="flex justify-between">
+                      <span className="text-xs text-[hsl(var(--muted-foreground))]">Purpose</span>
+                      <span className="text-xs">{purpose.replace(/_/g, ' ').toLowerCase()}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-xs text-[hsl(var(--muted-foreground))]">Provider</span>
                     <ProviderBadge provider={selectedAccount?.provider} size="xs" />
