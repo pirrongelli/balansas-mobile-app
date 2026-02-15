@@ -310,7 +310,14 @@ export default function PaymentsPage() {
   const canProceed = () => {
     switch (step) {
       case 0: return !!selectedPayee;
-      case 1: return !!selectedAccount && !!amount && parseFloat(amount) > 0 && isReferenceValid(reference, selectedPayee?.currency);
+      case 1: {
+        if (!selectedAccount || !amount || parseFloat(amount) <= 0) return false;
+        if (selectedAccount.provider === 'fiat_republic') {
+          return isReferenceValid(reference, selectedPayee?.currency);
+        }
+        // US Rails: purpose is required, reference/description is optional
+        return !!purpose;
+      }
       case 2: return true;
       default: return false;
     }
