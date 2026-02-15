@@ -104,12 +104,22 @@ export default function PaymentsPage() {
   // Determine payment scheme based on currency
   const getPaymentScheme = (currency) => {
     switch ((currency || '').toUpperCase()) {
-      case 'EUR': return 'SCT'; // SEPA Credit Transfer
-      case 'GBP': return 'FPS'; // Faster Payments
-      case 'USD': return 'DOMESTIC_WIRE';
+      case 'EUR': return 'SCT';
+      case 'GBP': return 'FPS';
+      case 'USD': return 'ACH'; // ACH is more permissive than DOMESTIC_WIRE for references
       case 'AUD': return 'NPP';
       case 'CAD': return 'EMT_EAGLE_NET';
       default: return 'SWIFT';
+    }
+  };
+
+  // Validate reference based on payment scheme
+  const getReferenceHint = (currency) => {
+    switch ((currency || '').toUpperCase()) {
+      case 'USD': return 'Min 6 alphanumeric chars, max 17. Not all the same character.';
+      case 'GBP': return 'Max 18 characters';
+      case 'EUR': return 'Max 140 characters';
+      default: return '';
     }
   };
 
