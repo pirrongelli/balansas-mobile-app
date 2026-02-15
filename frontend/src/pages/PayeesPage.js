@@ -548,35 +548,12 @@ export default function PayeesPage() {
               </div>
             </div>
             )}
-
-            {/* Bank Details - US Rails */}
-            {createProvider === 'rail_io' && (
-            <div className="pt-2">
-              <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] mb-3 uppercase tracking-wider">Account Details</p>
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label className="text-sm">Account Number <span className="text-[hsl(var(--status-danger))]">*</span></Label>
-                  <Input
-                    placeholder="123456789"
-                    value={form.accountNumber}
-                    onChange={(e) => setForm(f => ({ ...f, accountNumber: e.target.value }))}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm">Routing Number</Label>
-                  <Input
-                    placeholder="021000021"
-                    value={form.routingNumber}
-                    onChange={(e) => setForm(f => ({ ...f, routingNumber: e.target.value }))}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
-                  />
-                </div>
-              </div>
-            </div>
+            </>
             )}
           </div>
 
+          {/* Only show footer for EU Rails */}
+          {createProvider === 'fiat_republic' && (
           <SheetFooter>
             <Button
               onClick={handleCreate}
@@ -584,9 +561,10 @@ export default function PayeesPage() {
               className="w-full h-11 font-semibold"
               data-testid="payee-create-submit"
             >
-              {isCreating ? (createProvider === 'fiat_republic' ? 'Creating Payee...' : 'Creating Counterparty...') : (createProvider === 'fiat_republic' ? 'Create Payee' : 'Create Counterparty')}
+              {isCreating ? 'Creating Payee...' : 'Create Payee'}
             </Button>
           </SheetFooter>
+          )}
         </SheetContent>
       </Sheet>
     </div>
