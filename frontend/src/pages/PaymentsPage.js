@@ -326,10 +326,11 @@ export default function PaymentsPage() {
   // Filter accounts to match the selected payee's currency AND provider
   const matchingAccounts = selectedPayee
     ? accounts.filter(a => {
-        const currencyMatch = a.currency === selectedPayee.currency;
-        // Also match provider: EU payees use EU accounts, US counterparties use US accounts
-        const providerMatch = !selectedPayee.provider || a.provider === selectedPayee.provider;
-        return currencyMatch && providerMatch;
+        // Must match provider
+        if (selectedPayee.provider && a.provider !== selectedPayee.provider) return false;
+        // If payee has currency, must match; otherwise show all from that provider
+        if (selectedPayee.currency && a.currency !== selectedPayee.currency) return false;
+        return true;
       })
     : accounts;
 
