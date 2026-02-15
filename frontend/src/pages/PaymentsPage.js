@@ -119,8 +119,8 @@ export default function PaymentsPage() {
       if (selectedAccount.provider === 'fiat_republic') {
         // EU Rails - Fiat Republic
         const paymentBody = {
-          sourceAccountId: selectedAccount.fr_account_id || selectedAccount.id,
-          payeeId: selectedPayee.fr_payee_id || selectedPayee.id,
+          fromId: selectedAccount.fr_account_id || selectedAccount.id,
+          toId: selectedPayee.fr_payee_id || selectedPayee.id,
           amount: formatAmountForApi(amount),
           currency: selectedAccount.currency,
           reference: reference.trim(),
