@@ -70,24 +70,33 @@ export default function PaymentsPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
+  // Format amount as proper decimal string: "500.00"
+  const formatAmountForApi = (val) => {
+    const num = parseFloat(val);
+    if (isNaN(num)) return '0.00';
+    return num.toFixed(2);
+  };
+
   const calculateFee = async () => {
     if (!selectedAccount || !amount) return;
     try {
       const { data, error: feeErr } = await supabase.functions.invoke('calculate-fee', {
         body: {
-          amount: parseFloat(amount),
+          amount: formatAmountForApi(amount),
           currency: selectedAccount.currency,
           transactionType: 'PAYMENT',
           provider: selectedAccount.provider === 'fiat_republic' ? 'fiat_republic' : 'rail_io',
           customerId: customer.id,
         },
       });
-      if (feeErr) {
+      if (feeErr || data?.error) {
+        console.warn('[Fee] Fee calculation unavailable:', feeErr || data?.error);
         setFeeData(null);
       } else {
         setFeeData(data);
       }
-    } catch {
+    } catch (err) {
+      console.warn('[Fee] Fee calculation error:', err);
       setFeeData(null);
     }
   };
