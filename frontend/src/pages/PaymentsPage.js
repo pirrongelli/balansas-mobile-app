@@ -387,7 +387,7 @@ export default function PaymentsPage() {
                 <div className="bg-[hsl(var(--surface-2))] rounded-xl p-4 space-y-3">
                   <div className="flex justify-between">
                     <span className="text-xs text-[hsl(var(--muted-foreground))]">To</span>
-                    <span className="text-sm font-medium">{selectedPayee?.name || selectedPayee?.label}</span>
+                    <span className="text-sm font-medium">{getPayeeName(selectedPayee)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-[hsl(var(--muted-foreground))]">From</span>
