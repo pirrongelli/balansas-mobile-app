@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Copy, Check, ArrowDownLeft, ArrowUpRight, ExternalLink } from 'lucide-react';
-import { formatCurrency, formatDate, maskIban } from '@/lib/formatters';
+import { formatCurrency, formatDate, maskIban, getTxDisplayName, isTxIncoming } from '@/lib/formatters';
 import { toast } from 'sonner';
 
 export default function AccountDetailPage() {
