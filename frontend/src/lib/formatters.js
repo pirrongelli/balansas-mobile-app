@@ -71,3 +71,51 @@ export function maskIban(iban) {
   if (iban.length <= 8) return iban;
   return `${iban.slice(0, 4)} **** ${iban.slice(-4)}`;
 }
+
+/**
+ * Get payee display name from payee object
+ */
+export function getPayeeName(payee) {
+  return payee?.payee_name || payee?.name || payee?.label || 'Unknown Payee';
+}
+
+/**
+ * Get transaction display name
+ */
+export function getTxDisplayName(tx) {
+  return tx?.counterparty_name || tx?.description || tx?.transaction_type || tx?.type || 'Transaction';
+}
+
+/**
+ * Determine if transaction is incoming based on transaction_type
+ */
+export function isTxIncoming(tx) {
+  const type = (tx?.transaction_type || tx?.type || '').toUpperCase();
+  if (type === 'DEPOSIT' || type === 'CREDIT' || type === 'INBOUND') return true;
+  if (type === 'WITHDRAWAL' || type === 'PAYMENT' || type === 'DEBIT' || type === 'OUTBOUND') return false;
+  // For TRANSFER, check description or default to outgoing
+  if (type === 'TRANSFER') {
+    const desc = (tx?.description || '').toLowerCase();
+    if (desc.startsWith('from:') || desc.includes('received')) return true;
+    if (desc.startsWith('to:') || desc.includes('sent')) return false;
+  }
+  // For EXCHANGE, check if it's a buy or sell
+  if (type === 'EXCHANGE') return false;
+  return false;
+}
+
+/**
+ * Normalize status for display (handle uppercase from DB)
+ */
+export function normalizeStatus(status) {
+  if (!status) return 'unknown';
+  return status.toLowerCase();
+}
+
+/**
+ * Format transaction type for display
+ */
+export function formatTxType(type) {
+  if (!type) return 'Transaction';
+  return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+}
