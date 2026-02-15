@@ -92,23 +92,24 @@ export default function PaymentsPage() {
   const calculateFee = async () => {
     if (!selectedAccount || !amount) return;
     try {
+      const isRail = selectedAccount.provider === 'rail_io';
       const { data, error: feeErr } = await supabase.functions.invoke('calculate-fee', {
         body: {
           customer_id: customer.id,
-          transaction_type: 'PAYMENT',
+          transaction_type: isRail ? 'WITHDRAWAL' : 'PAYMENT',
           currency: selectedAccount.currency,
-          amount: formatAmountForApi(amount),
-          provider: selectedAccount.provider === 'fiat_republic' ? 'fiat_republic' : 'rail_io',
+          amount: parseFloat(amount),
+          provider: isRail ? 'rail_io' : 'fiat_republic',
         },
       });
       if (feeErr || data?.error) {
-        console.warn('[Fee] Fee calculation unavailable:', feeErr || data?.error);
+        console.warn('[Fee] Unavailable:', feeErr || data?.error);
         setFeeData(null);
       } else {
         setFeeData(data);
       }
     } catch (err) {
-      console.warn('[Fee] Fee calculation error:', err);
+      console.warn('[Fee] Error:', err);
       setFeeData(null);
     }
   };
