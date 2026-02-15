@@ -75,14 +75,14 @@ export default function TransactionsPage() {
 
   // Filter transactions
   const filtered = transactions.filter(tx => {
-    if (statusFilter !== 'all' && (tx.status || '').toLowerCase() !== statusFilter) return false;
+    if (statusFilter !== 'all' && normalizeStatus(tx.status) !== statusFilter) return false;
     if (providerFilter !== 'all' && tx.provider !== providerFilter) return false;
     if (search) {
       const searchLower = search.toLowerCase();
       const matchName = (tx.counterparty_name || '').toLowerCase().includes(searchLower);
       const matchDesc = (tx.description || '').toLowerCase().includes(searchLower);
       const matchRef = (tx.reference || '').toLowerCase().includes(searchLower);
-      const matchType = (tx.type || '').toLowerCase().includes(searchLower);
+      const matchType = (tx.transaction_type || tx.type || '').toLowerCase().includes(searchLower);
       if (!matchName && !matchDesc && !matchRef && !matchType) return false;
     }
     return true;
