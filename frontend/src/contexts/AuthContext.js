@@ -200,38 +200,56 @@ export function AuthProvider({ children }) {
       }
 
       console.log('[MFA] Step 2: Verifying with challengeId:', challengeData.id);
-      const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
-        factorId,
-        challengeId: challengeData.id,
-        code,
-      });
-      console.log('[MFA] Step 2 result:', { verifyData, verifyError });
+      let verifyData = null;
+      let verifyError = null;
+      try {
+        const result = await supabase.auth.mfa.verify({
+          factorId,
+          challengeId: challengeData.id,
+          code,
+        });
+        verifyData = result.data;
+        verifyError = result.error;
+      } catch (sdkError) {
+        console.warn('[MFA] SDK threw during verify (may be body stream bug):', sdkError.message);
+        // SDK might throw "body stream already read" even on success
+        // Check if session was actually upgraded
+        verifyError = sdkError;
+      }
+
+      console.log('[MFA] Step 2 result:', { verifyData, verifyError: verifyError?.message });
+
+      // IMPORTANT: Even if verify returned an error, check if the session was
+      // actually upgraded to AAL2 (Supabase SDK body-stream parsing bug workaround)
+      const { data: aalCheck } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      console.log('[MFA] Step 3: AAL check after verify:', aalCheck);
+
+      if (aalCheck?.currentLevel === 'aal2') {
+        // Verification actually succeeded despite potential SDK error!
+        console.log('[MFA] AAL2 confirmed! MFA verification succeeded.');
+        setMfaRequired(false);
+
+        const { data: { session: freshSession } } = await supabase.auth.getSession();
+        console.log('[MFA] Step 4: Fresh session obtained:', !!freshSession);
+
+        if (freshSession) {
+          setSession(freshSession);
+          setUser(freshSession.user);
+          await resolveCustomerContext(freshSession.user.id);
+        }
+
+        console.log('[MFA] Step 5: Complete - redirecting to dashboard');
+        return verifyData;
+      }
+
+      // If AAL is still aal1, the verification truly failed
       if (verifyError) {
-        console.error('[MFA] Verify error:', verifyError);
+        console.error('[MFA] Verification truly failed:', verifyError);
         throw verifyError;
       }
 
-      console.log('[MFA] Step 3: Verification successful, updating state');
-      setMfaRequired(false);
-      
-      // Get fresh session after MFA verification
-      const { data: { session: freshSession } } = await supabase.auth.getSession();
-      console.log('[MFA] Step 4: Fresh session obtained:', !!freshSession);
-      
-      if (freshSession) {
-        setSession(freshSession);
-        setUser(freshSession.user);
-        await resolveCustomerContext(freshSession.user.id);
-      } else if (verifyData) {
-        setSession(verifyData.session || session);
-        const currentUser = verifyData.user || user;
-        if (currentUser) {
-          await resolveCustomerContext(currentUser.id);
-        }
-      }
-      
-      console.log('[MFA] Step 5: Complete - mfaRequired set to false');
-      return verifyData;
+      // Fallback: no error but no AAL2 either
+      throw new Error('Verification failed. Please try again with a new code.');
     } catch (err) {
       console.error('[MFA] verifyMfa caught error:', err);
       throw err;
