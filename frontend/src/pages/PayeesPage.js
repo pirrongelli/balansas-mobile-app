@@ -269,15 +269,47 @@ export default function PayeesPage() {
       <Sheet open={showCreate} onOpenChange={setShowCreate}>
         <SheetContent side="bottom" className="bg-[hsl(var(--card))] border-[hsl(var(--border))] rounded-t-2xl max-h-[85vh] overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Add New Payee</SheetTitle>
-            <SheetDescription>Enter the recipient's banking details</SheetDescription>
+            <SheetTitle>Add New {createProvider === 'fiat_republic' ? 'Payee' : 'Counterparty'}</SheetTitle>
+            <SheetDescription>
+              {createProvider === 'fiat_republic' ? 'EU Rails payee' : 'US Rails counterparty'}
+            </SheetDescription>
           </SheetHeader>
 
           <div className="space-y-4 py-4">
+            {/* Provider Selector */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setCreateProvider('fiat_republic')}
+                className={`flex flex-col items-center gap-1 rounded-xl border p-3 transition-colors duration-150 ${
+                  createProvider === 'fiat_republic'
+                    ? 'border-[hsl(var(--provider-eu))] bg-[hsl(var(--provider-eu)/0.08)]'
+                    : 'border-[hsl(var(--border))] bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))]'
+                }`}
+                data-testid="provider-eu-select"
+              >
+                <span className={`text-xs font-semibold ${createProvider === 'fiat_republic' ? 'text-[hsl(var(--provider-eu))]' : 'text-[hsl(var(--muted-foreground))]'}`}>EU Rails</span>
+                <span className="text-[10px] text-[hsl(var(--muted-foreground))]">Payee</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setCreateProvider('rail_io')}
+                className={`flex flex-col items-center gap-1 rounded-xl border p-3 transition-colors duration-150 ${
+                  createProvider === 'rail_io'
+                    ? 'border-[hsl(var(--provider-us))] bg-[hsl(var(--provider-us)/0.08)]'
+                    : 'border-[hsl(var(--border))] bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))]'
+                }`}
+                data-testid="provider-us-select"
+              >
+                <span className={`text-xs font-semibold ${createProvider === 'rail_io' ? 'text-[hsl(var(--provider-us))]' : 'text-[hsl(var(--muted-foreground))]'}`}>US Rails</span>
+                <span className="text-[10px] text-[hsl(var(--muted-foreground))]">Counterparty</span>
+              </button>
+            </div>
+
             {createError && (
               <div className="flex items-center gap-2 text-sm text-[hsl(var(--status-danger))] bg-[hsl(var(--status-danger)/0.08)] rounded-lg px-3 py-2">
                 <AlertCircle className="h-4 w-4" />
-                {createError}
+                {createError}}
               </div>
             )}
             <div className="space-y-2">
