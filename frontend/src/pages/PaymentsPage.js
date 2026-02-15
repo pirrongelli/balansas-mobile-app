@@ -145,7 +145,7 @@ export default function PaymentsPage() {
         // US Rails - Rail.io withdrawal
         const withdrawalBody = {
           source_account_id: selectedAccount.rail_account_id || selectedAccount.id,
-          amount: amount.toString(),
+          amount: formatAmountForApi(amount),
           currency: selectedAccount.currency,
           reference: reference.trim(),
           purpose: reference.trim(),
