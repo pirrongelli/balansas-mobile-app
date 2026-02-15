@@ -181,7 +181,7 @@ export default function TransactionsPage() {
         ) : (
           <div className="space-y-1">
             {filtered.map((tx, i) => {
-              const isIncoming = tx.direction === 'incoming' || tx.type === 'deposit';
+              const incoming = isTxIncoming(tx);
               return (
                 <div
                   key={tx.id || i}
@@ -190,18 +190,19 @@ export default function TransactionsPage() {
                 >
                   <div className="flex items-start gap-3">
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isIncoming ? 'bg-[hsl(var(--status-success)/0.12)]' : 'bg-[hsl(var(--surface-2))]'
+                      incoming ? 'bg-[hsl(var(--status-success)/0.12)]' : 'bg-[hsl(var(--surface-2))]'
                     }`}>
-                      {isIncoming
+                      {incoming
                         ? <ArrowDownLeft className="h-4 w-4 text-[hsl(var(--status-success))]" />
                         : <ArrowUpRight className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
                       }
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium truncate max-w-[160px]">
-                        {tx.counterparty_name || tx.description || tx.type || 'Transaction'}
+                        {getTxDisplayName(tx)}
                       </p>
-                      <div className="flex items-center gap-1.5 mt-1">
+                      <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                        <span className="text-[10px] text-[hsl(var(--accent-teal))] font-medium">{formatTxType(tx.transaction_type || tx.type)}</span>
                         <ProviderBadge provider={tx.provider} size="xs" />
                         <span className="text-[10px] text-[hsl(var(--muted-foreground))]">
                           {formatDate(tx.created_at)}
@@ -211,9 +212,9 @@ export default function TransactionsPage() {
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className={`text-sm font-semibold tabular-nums ${
-                      isIncoming ? 'text-[hsl(var(--status-success))]' : ''
+                      incoming ? 'text-[hsl(var(--status-success))]' : ''
                     }`}>
-                      {isIncoming ? '+' : '-'}{formatCurrency(tx.amount, tx.currency)}
+                      {incoming ? '+' : '-'}{formatCurrency(tx.amount, tx.currency)}
                     </p>
                     <div className="mt-1">
                       <StatusBadge status={tx.status} />
