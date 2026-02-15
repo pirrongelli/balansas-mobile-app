@@ -168,7 +168,7 @@ export default function AccountDetailPage() {
                 return (
                   <div
                     key={tx.id || i}
-                    className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 hover:bg-[hsl(var(--accent))] transition-colors duration-150"
+                    className="flex items-center justify-between gap-3 px-4 py-3.5 bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))] transition-colors duration-150"
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
