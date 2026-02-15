@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Users, Plus, Search, X, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { getPayeeName } from '@/lib/formatters';
+import { ProviderBadge } from '@/components/shared/ProviderBadge';
 
 export default function PayeesPage() {
   const { customer } = useAuth();
