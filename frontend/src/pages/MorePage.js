@@ -47,19 +47,19 @@ export default function MorePage() {
     <div data-testid="more-page">
       <TopHeader title="More" />
 
-      <div className="px-4 pt-5 space-y-5">
+      <div className="px-4 pt-5 space-y-6">
         {/* User Card */}
         <Card className="bg-[hsl(var(--card))] border-[hsl(var(--border))]">
-          <CardContent className="pt-4 pb-4 flex items-center gap-3">
-            <Avatar className="h-12 w-12">
+          <CardContent className="pt-5 pb-5 flex items-center gap-4">
+            <Avatar className="h-12 w-12 flex-shrink-0">
               <AvatarFallback className="bg-[hsl(var(--accent-teal)/0.12)] text-[hsl(var(--accent-teal))] font-semibold">
                 {getInitials(displayName)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold truncate" data-testid="user-display-name">{displayName}</p>
-              <p className="text-xs text-[hsl(var(--muted-foreground))] truncate">{user?.email}</p>
-              <div className="flex items-center gap-1.5 mt-1">
+              <p className="text-xs text-[hsl(var(--muted-foreground))] truncate mt-0.5">{user?.email}</p>
+              <div className="flex items-center gap-2 mt-2">
                 <Badge variant="outline" className="text-[9px] px-1.5 py-0 font-medium bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
                   {customer?.customer_type?.replace(/_/g, ' ') || 'Customer'}
                 </Badge>
@@ -75,22 +75,22 @@ export default function MorePage() {
 
         {/* Provider Info */}
         {providers.length > 0 && (
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             {providers.map((p, i) => (
               <div
                 key={i}
-                className={`flex-1 rounded-xl border p-3 ${
+                className={`flex-1 rounded-xl border p-4 ${
                   p.provider === 'fiat_republic'
                     ? 'border-[hsl(var(--provider-eu)/0.25)] bg-[hsl(var(--provider-eu)/0.06)]'
                     : 'border-[hsl(var(--provider-us)/0.25)] bg-[hsl(var(--provider-us)/0.06)]'
                 }`}
               >
-                <p className={`text-[10px] font-medium ${
+                <p className={`text-xs font-medium ${
                   p.provider === 'fiat_republic' ? 'text-[hsl(var(--provider-eu))]' : 'text-[hsl(var(--provider-us))]'
                 }`}>
                   {p.provider === 'fiat_republic' ? 'EU Rails' : 'US Rails'}
                 </p>
-                <p className="text-[10px] text-[hsl(var(--muted-foreground))] mt-0.5">
+                <p className="text-[11px] text-[hsl(var(--muted-foreground))] mt-1">
                   {p.is_enabled ? 'Connected' : 'Disabled'}
                 </p>
               </div>
@@ -101,10 +101,10 @@ export default function MorePage() {
         {/* Menu Sections */}
         {menuSections.map((section, si) => (
           <div key={si}>
-            <p className="text-xs text-[hsl(var(--muted-foreground))] font-medium mb-2 uppercase tracking-wider">
+            <p className="text-[10px] text-[hsl(var(--muted-foreground))] font-medium mb-2 uppercase tracking-widest">
               {section.title}
             </p>
-            <div className="space-y-1.5">
+            <div className="rounded-xl border border-[hsl(var(--border))] overflow-hidden divide-y divide-[hsl(var(--border))]">
               {section.items
                 .filter(item => !item.hide)
                 .map((item, ii) => (
@@ -112,7 +112,7 @@ export default function MorePage() {
                     key={ii}
                     data-testid={item.testId}
                     onClick={() => item.path !== '#' && navigate(item.path)}
-                    className="w-full flex items-center justify-between gap-3 rounded-xl px-3.5 py-3.5 hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] transition-colors duration-150"
+                    className="w-full flex items-center justify-between gap-3 px-4 py-4 bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] transition-colors duration-150"
                   >
                     <div className="flex items-center gap-3">
                       <item.icon className="h-5 w-5 text-[hsl(var(--muted-foreground))]" />
@@ -128,7 +128,7 @@ export default function MorePage() {
         {/* Sign Out */}
         <Button
           variant="destructive"
-          className="w-full h-11 font-semibold"
+          className="w-full h-12 font-semibold"
           data-testid="sign-out-button"
           onClick={signOut}
         >

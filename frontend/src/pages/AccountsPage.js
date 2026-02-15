@@ -86,7 +86,7 @@ export default function AccountsPage() {
 
       <div className="px-4 pt-4">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="w-full grid grid-cols-2 bg-[hsl(var(--surface-2))] mb-4">
+          <TabsList className="w-full grid grid-cols-2 bg-[hsl(var(--surface-2))] mb-5">
             <TabsTrigger value="fiat" data-testid="accounts-tab-fiat" className="text-xs">
               Fiat ({fiatAccounts.length})
             </TabsTrigger>
@@ -103,13 +103,13 @@ export default function AccountsPage() {
                 description="Your fiat accounts will appear here"
               />
             ) : (
-              <div className="space-y-2.5">
+              <div className="rounded-xl border border-[hsl(var(--border))] overflow-hidden divide-y divide-[hsl(var(--border))]">
                 {fiatAccounts.map((account, i) => (
                   <div
                     key={account.id || i}
                     data-testid={`account-row-${i}`}
                     onClick={() => navigate(`/accounts/${account.provider}/${account.id}`)}
-                    className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-3.5 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
+                    className="flex items-center justify-between gap-3 px-4 py-4 bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[hsl(var(--accent-teal)/0.12)] flex items-center justify-center text-xs font-bold text-[hsl(var(--accent-teal))]">
@@ -119,7 +119,7 @@ export default function AccountsPage() {
                         <p className="text-sm font-medium truncate max-w-[150px]">
                           {account.label || account.name || `${account.currency} Account`}
                         </p>
-                        <div className="flex items-center gap-1.5 mt-1">
+                        <div className="flex items-center gap-1.5 mt-1.5">
                           <ProviderBadge provider={account.provider} size="xs" />
                           {account.status && <StatusBadge status={account.status} />}
                         </div>
@@ -143,12 +143,12 @@ export default function AccountsPage() {
                 description="Crypto accounts from US Rails will appear here"
               />
             ) : (
-              <div className="space-y-2.5">
+              <div className="rounded-xl border border-[hsl(var(--border))] overflow-hidden divide-y divide-[hsl(var(--border))]">
                 {cryptoAccounts.map((account, i) => (
                   <div
                     key={account.id || i}
                     data-testid={`crypto-account-row-${i}`}
-                    className="flex items-center justify-between gap-3 rounded-xl px-3.5 py-3.5 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
+                    className="flex items-center justify-between gap-3 px-4 py-4 bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[hsl(var(--provider-us)/0.12)] flex items-center justify-center text-xs font-bold text-[hsl(var(--provider-us))]">
@@ -156,7 +156,7 @@ export default function AccountsPage() {
                       </div>
                       <div>
                         <p className="text-sm font-medium">{account.asset_type || 'Crypto'}</p>
-                        <ProviderBadge provider="rail_io" size="xs" />
+                        <div className="mt-1"><ProviderBadge provider="rail_io" size="xs" /></div>
                       </div>
                     </div>
                     <div className="text-right">
@@ -164,7 +164,7 @@ export default function AccountsPage() {
                         {Number(account.balance || 0).toFixed(8)}
                       </p>
                       {account.pending_balance > 0 && (
-                        <p className="text-[10px] text-[hsl(var(--status-warning))]">Pending: {Number(account.pending_balance).toFixed(8)}</p>
+                        <p className="text-[10px] text-[hsl(var(--status-warning))] mt-0.5">Pending: {Number(account.pending_balance).toFixed(8)}</p>
                       )}
                     </div>
                   </div>

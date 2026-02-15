@@ -73,7 +73,6 @@ export default function TransactionsPage() {
     fetchTransactions(transactions.length, true);
   };
 
-  // Filter transactions
   const filtered = transactions.filter(tx => {
     if (statusFilter !== 'all' && normalizeStatus(tx.status) !== statusFilter) return false;
     if (providerFilter !== 'all' && tx.provider !== providerFilter) return false;
@@ -119,7 +118,7 @@ export default function TransactionsPage() {
         }
       />
 
-      <div className="px-4 pt-4 space-y-3">
+      <div className="px-4 pt-4 space-y-4">
         {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
@@ -179,50 +178,52 @@ export default function TransactionsPage() {
             description={search ? 'Try a different search term' : 'Your activity will show up here'}
           />
         ) : (
-          <div className="space-y-2">
-            {filtered.map((tx, i) => {
-              const incoming = isTxIncoming(tx);
-              return (
-                <div
-                  key={tx.id || i}
-                  data-testid={`transaction-item-${i}`}
-                  className="flex items-start justify-between gap-3 rounded-xl px-3.5 py-3.5 hover:bg-[hsl(var(--accent))] bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] transition-colors duration-150"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      incoming ? 'bg-[hsl(var(--status-success)/0.12)]' : 'bg-[hsl(var(--surface-2))]'
-                    }`}>
-                      {incoming
-                        ? <ArrowDownLeft className="h-4 w-4 text-[hsl(var(--status-success))]" />
-                        : <ArrowUpRight className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
-                      }
+          <>
+            <div className="rounded-xl border border-[hsl(var(--border))] overflow-hidden divide-y divide-[hsl(var(--border))]">
+              {filtered.map((tx, i) => {
+                const incoming = isTxIncoming(tx);
+                return (
+                  <div
+                    key={tx.id || i}
+                    data-testid={`transaction-item-${i}`}
+                    className="flex items-start justify-between gap-3 px-4 py-4 bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))] transition-colors duration-150"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        incoming ? 'bg-[hsl(var(--status-success)/0.12)]' : 'bg-[hsl(var(--surface-2))]'
+                      }`}>
+                        {incoming
+                          ? <ArrowDownLeft className="h-4 w-4 text-[hsl(var(--status-success))]" />
+                          : <ArrowUpRight className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
+                        }
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate max-w-[160px]">
+                          {getTxDisplayName(tx)}
+                        </p>
+                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                          <span className="text-[10px] text-[hsl(var(--accent-teal))] font-medium">{formatTxType(tx.transaction_type || tx.type)}</span>
+                          <ProviderBadge provider={tx.provider} size="xs" />
+                          <span className="text-[10px] text-[hsl(var(--muted-foreground))]">
+                            {formatDate(tx.created_at)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate max-w-[160px]">
-                        {getTxDisplayName(tx)}
+                    <div className="text-right flex-shrink-0">
+                      <p className={`text-sm font-semibold tabular-nums ${
+                        incoming ? 'text-[hsl(var(--status-success))]' : ''
+                      }`}>
+                        {incoming ? '+' : '-'}{formatCurrency(tx.amount, tx.currency)}
                       </p>
-                      <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                        <span className="text-[10px] text-[hsl(var(--accent-teal))] font-medium">{formatTxType(tx.transaction_type || tx.type)}</span>
-                        <ProviderBadge provider={tx.provider} size="xs" />
-                        <span className="text-[10px] text-[hsl(var(--muted-foreground))]">
-                          {formatDate(tx.created_at)}
-                        </span>
+                      <div className="mt-1.5">
+                        <StatusBadge status={tx.status} />
                       </div>
                     </div>
                   </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className={`text-sm font-semibold tabular-nums ${
-                      incoming ? 'text-[hsl(var(--status-success))]' : ''
-                    }`}>
-                      {incoming ? '+' : '-'}{formatCurrency(tx.amount, tx.currency)}
-                    </p>
-                    <div className="mt-1">
-                      <StatusBadge status={tx.status} />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
 
             {/* Load More */}
             {hasMore && (
@@ -238,7 +239,7 @@ export default function TransactionsPage() {
                 </Button>
               </div>
             )}
-          </div>
+          </>
         )}
       </div>
     </div>
