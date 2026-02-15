@@ -121,6 +121,9 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  // Track if MFA was already completed in this session
+  const mfaCompletedRef = useRef(false);
+
   useEffect(() => {
     const initAuth = async () => {
       try {
@@ -128,9 +131,18 @@ export function AuthProvider({ children }) {
         if (currentSession) {
           setSession(currentSession);
           setUser(currentSession.user);
-          const needsMfa = await checkMfaStatus();
-          if (!needsMfa) {
+          
+          // Check AAL level - if already aal2, skip MFA
+          const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+          if (aalData?.currentLevel === 'aal2') {
+            mfaCompletedRef.current = true;
+            setMfaRequired(false);
             await resolveCustomerContext(currentSession.user.id);
+          } else {
+            const needsMfa = await checkMfaStatus();
+            if (!needsMfa) {
+              await resolveCustomerContext(currentSession.user.id);
+            }
           }
           resetInactivityTimer();
         }
@@ -147,20 +159,38 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
-      setSession(newSession);
-      setUser(newSession?.user || null);
       if (event === 'SIGNED_OUT') {
+        setSession(null);
+        setUser(null);
         setCustomer(null);
         setOrgRole(null);
         setIsOwner(false);
         setProviders([]);
         setMfaRequired(false);
         setMfaFactors([]);
+        mfaCompletedRef.current = false;
+        return;
+      }
+      
+      // For TOKEN_REFRESHED or other events, update session but DON'T re-check MFA
+      // if it was already completed
+      if (newSession) {
+        setSession(newSession);
+        setUser(newSession.user);
+        
+        // If MFA was already completed, don't re-trigger MFA check
+        if (mfaCompletedRef.current) {
+          // Just make sure customer context is loaded
+          if (!customer && newSession.user) {
+            await resolveCustomerContext(newSession.user.id);
+          }
+        }
       }
     });
 
     return () => subscription?.unsubscribe();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customer]);
 
   const signIn = async (email, password) => {
     let data, error;
