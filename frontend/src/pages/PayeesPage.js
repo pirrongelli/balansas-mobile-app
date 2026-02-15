@@ -32,11 +32,23 @@ export default function PayeesPage() {
     if (!customer?.id) return;
     try {
       setError(null);
-      const { data } = await supabase
+      // Fetch EU Rails payees
+      const { data: frData } = await supabase
         .from('fr_payees')
         .select('*')
         .eq('customer_id', customer.id);
-      setPayees(data || []);
+      
+      // Fetch US Rails counterparties
+      const { data: railData } = await supabase
+        .from('rail_counterparties')
+        .select('*')
+        .eq('customer_id', customer.id);
+
+      const allPayees = [
+        ...(frData || []).map(p => ({ ...p, provider: 'fiat_republic' })),
+        ...(railData || []).map(p => ({ ...p, provider: 'rail_io' })),
+      ];
+      setPayees(allPayees);
     } catch (err) {
       setError(err.message);
     } finally {
