@@ -68,46 +68,55 @@ export default function PayeesPage() {
     setIsCreating(true);
     setCreateError('');
     try {
-      const body = {
-        name: form.name,
-        currency: form.currency,
-        type: form.type,
-        address: {
-          line1: form.line1 || 'N/A',
-          city: form.city || 'N/A',
-          country: form.country || 'GB',
-          postalCode: form.postalCode || 'N/A',
-        },
-        bankDetails: {},
-      };
+      let response;
 
-      if (form.currency === 'EUR') {
-        body.bankDetails = {
-          iban: form.iban,
-          bic: form.bic || undefined,
+      if (createProvider === 'fiat_republic') {
+        // EU Rails payee
+        const body = {
+          name: form.name,
+          currency: form.currency,
+          type: form.type,
+          address: {
+            line1: form.line1 || 'N/A',
+            city: form.city || 'N/A',
+            country: form.country || 'GB',
+            postalCode: form.postalCode || 'N/A',
+          },
+          bankDetails: {},
         };
-      } else if (form.currency === 'GBP') {
-        body.bankDetails = {
-          accountNumber: form.accountNumber,
-          sortCode: form.sortCode,
-        };
+
+        if (form.currency === 'EUR') {
+          body.bankDetails = { iban: form.iban, bic: form.bic || undefined };
+        } else if (form.currency === 'GBP') {
+          body.bankDetails = { accountNumber: form.accountNumber, sortCode: form.sortCode };
+        } else {
+          body.bankDetails = { accountNumber: form.accountNumber, routingNumber: form.routingNumber };
+        }
+
+        console.log('[Payee] EU Rails payload:', body);
+        response = await supabase.functions.invoke('fr-proxy', {
+          body: { endpoint: '/api/v1/payees', method: 'POST', customerId: customer.id, body },
+        });
       } else {
-        body.bankDetails = {
-          accountNumber: form.accountNumber,
-          routingNumber: form.routingNumber,
+        // US Rails counterparty
+        const body = {
+          name: form.name,
+          currency: form.currency,
+          account_number: form.accountNumber,
+          routing_number: form.routingNumber || undefined,
+          address: {
+            line1: form.line1 || 'N/A',
+            city: form.city || 'N/A',
+            country: form.country || 'US',
+            postal_code: form.postalCode || 'N/A',
+          },
         };
+
+        console.log('[Payee] US Rails payload:', body);
+        response = await supabase.functions.invoke('rail-proxy', {
+          body: { customerId: customer.id, endpoint: '/counterparties', method: 'POST', body },
+        });
       }
-
-      console.log('[Payee] Create payload:', body);
-
-      const response = await supabase.functions.invoke('fr-proxy', {
-        body: {
-          endpoint: '/api/v1/payees',
-          method: 'POST',
-          customerId: customer.id,
-          body,
-        },
-      });
 
       if (response.error) {
         let errorDetail = response.error.message;
