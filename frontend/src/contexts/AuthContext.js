@@ -126,7 +126,10 @@ export function AuthProvider({ children }) {
     };
 
     initAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
+  useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user || null);
