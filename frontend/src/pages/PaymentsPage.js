@@ -151,11 +151,16 @@ export default function PaymentsPage() {
   const canProceed = () => {
     switch (step) {
       case 0: return !!selectedPayee;
-      case 1: return !!selectedAccount && !!amount && parseFloat(amount) > 0;
+      case 1: return !!selectedAccount && !!amount && parseFloat(amount) > 0 && !!reference.trim();
       case 2: return true;
       default: return false;
     }
   };
+
+  // Filter accounts to match the selected payee's currency
+  const matchingAccounts = selectedPayee
+    ? accounts.filter(a => a.currency === selectedPayee.currency)
+    : accounts;
 
   const handleNext = () => {
     if (step === 1) calculateFee();
