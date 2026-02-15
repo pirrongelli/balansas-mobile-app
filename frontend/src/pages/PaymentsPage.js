@@ -515,17 +515,26 @@ export default function PaymentsPage() {
                   <Label className="text-sm">Reference <span className="text-[hsl(var(--status-danger))]">*</span></Label>
                   <Input
                     data-testid="payment-reference-input"
-                    placeholder="Payment reference (required)"
+                    placeholder={selectedPayee?.currency === 'USD' || selectedPayee?.currency === 'GBP' ? 'e.g. PayRef01' : 'Payment reference'}
                     value={reference}
                     onChange={(e) => setReference(e.target.value)}
-                    maxLength={selectedPayee?.currency === 'USD' ? 17 : 140}
-                    className={`h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))] ${!reference.trim() && amount ? 'border-[hsl(var(--status-warning)/0.5)]' : ''}`}
+                    maxLength={selectedPayee?.currency === 'USD' || selectedPayee?.currency === 'GBP' ? 17 : 140}
+                    className={`h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))] ${reference && !isReferenceValid(reference, selectedPayee?.currency) ? 'border-[hsl(var(--status-danger)/0.5)]' : ''}`}
                   />
                   {getReferenceHint(selectedPayee?.currency) && (
                     <p className="text-[10px] text-[hsl(var(--muted-foreground))]">{getReferenceHint(selectedPayee?.currency)}</p>
                   )}
-                  {!reference.trim() && amount && (
-                    <p className="text-[10px] text-[hsl(var(--status-warning))]">Reference is required to proceed</p>
+                  {reference && !isReferenceValid(reference, selectedPayee?.currency) && (
+                    <p className="text-[10px] text-[hsl(var(--status-danger))]">
+                      {reference.replace(/[\s\-\.&\/]/g, '').length < 6
+                        ? `Need at least 6 alphanumeric characters (currently ${reference.replace(/[\s\-\.&\/]/g, '').length})`
+                        : reference.length > 17
+                          ? 'Max 17 characters'
+                          : 'Characters must not all be the same'}
+                    </p>
+                  )}
+                  {!reference && amount && (
+                    <p className="text-[10px] text-[hsl(var(--status-warning))]">Reference is required</p>
                   )}
                 </div>
               </div>
