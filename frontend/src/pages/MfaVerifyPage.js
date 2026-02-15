@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,6 +10,7 @@ export default function MfaVerifyPage() {
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const isVerifyingRef = useRef(false);
 
   // Find the best factor to use - prefer TOTP, then phone
   const totpFactors = mfaFactors.filter(f => f.factor_type === 'totp' && f.status === 'verified');
