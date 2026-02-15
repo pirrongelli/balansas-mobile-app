@@ -260,7 +260,7 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-1">
               {transactions.map((tx, i) => {
-                const isIncoming = tx.direction === 'incoming' || tx.type === 'deposit';
+                const incoming = isTxIncoming(tx);
                 return (
                   <div
                     key={tx.id || i}
@@ -270,29 +270,32 @@ export default function DashboardPage() {
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
-                        isIncoming
+                        incoming
                           ? 'bg-[hsl(var(--status-success)/0.12)]'
                           : 'bg-[hsl(var(--surface-2))]'
                       }`}>
-                        {isIncoming
+                        {incoming
                           ? <ArrowDownLeft className="h-4 w-4 text-[hsl(var(--status-success))]" />
                           : <ArrowUpRight className="h-4 w-4 text-[hsl(var(--muted-foreground))]" />
                         }
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium truncate max-w-[140px]">
-                          {tx.counterparty_name || tx.description || tx.type || 'Transaction'}
+                          {getTxDisplayName(tx)}
                         </p>
-                        <p className="text-[10px] text-[hsl(var(--muted-foreground))]">
-                          {formatDate(tx.created_at)}
-                        </p>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-[hsl(var(--accent-teal))]">{formatTxType(tx.transaction_type || tx.type)}</span>
+                          <span className="text-[10px] text-[hsl(var(--muted-foreground))]">
+                            {formatDate(tx.created_at)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
                       <p className={`text-sm font-semibold tabular-nums ${
-                        isIncoming ? 'text-[hsl(var(--status-success))]' : ''
+                        incoming ? 'text-[hsl(var(--status-success))]' : ''
                       }`}>
-                        {isIncoming ? '+' : '-'}{formatCurrency(tx.amount, tx.currency)}
+                        {incoming ? '+' : '-'}{formatCurrency(tx.amount, tx.currency)}
                       </p>
                       <StatusBadge status={tx.status} />
                     </div>
