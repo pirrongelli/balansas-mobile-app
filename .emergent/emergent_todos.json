@@ -1,0 +1,34 @@
+[
+  {
+    "content": "Setup: Supabase client, env vars, dark theme tokens, fonts, app shell structure",
+    "status": "in_progress"
+  },
+  {
+    "content": "Auth flow: Login page with Supabase auth, MFA verification, session management",
+    "status": "pending"
+  },
+  {
+    "content": "Dashboard: Balance overview, quick stats, recent transactions",
+    "status": "pending"
+  },
+  {
+    "content": "Accounts: Fiat accounts list (EU + US Rails), account details with banking info",
+    "status": "pending"
+  },
+  {
+    "content": "Transactions: Unified history with filters and search",
+    "status": "pending"
+  },
+  {
+    "content": "Bottom tab navigation + page transitions + mobile shell",
+    "status": "pending"
+  },
+  {
+    "content": "Payments: Create payment wizard + payees management",
+    "status": "pending"
+  },
+  {
+    "content": "Testing & polish",
+    "status": "pending"
+  }
+]
