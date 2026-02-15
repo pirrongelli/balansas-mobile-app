@@ -323,72 +323,76 @@ export default function PayeesPage() {
             <div className="pt-2">
               <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] mb-3 uppercase tracking-wider">Bank Details</p>
               <div className="space-y-3">
-                <div className="space-y-2">
-                  <Label className="text-sm">IBAN</Label>
-                  <Input
-                    placeholder="DE89 3704 0044 0532 0130 00"
-                    value={form.iban}
-                    onChange={(e) => setForm(f => ({ ...f, iban: e.target.value }))}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm">BIC / SWIFT</Label>
-                  <Input
-                    placeholder="COBADEFFXXX"
-                    value={form.bic}
-                    onChange={(e) => setForm(f => ({ ...f, bic: e.target.value }))}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
-                  />
-                </div>
-              </>
-            )}
+                {form.currency === 'EUR' && (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-sm">IBAN <span className="text-[hsl(var(--status-danger))]">*</span></Label>
+                      <Input
+                        placeholder="DE89 3704 0044 0532 0130 00"
+                        value={form.iban}
+                        onChange={(e) => setForm(f => ({ ...f, iban: e.target.value }))}
+                        className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">BIC / SWIFT</Label>
+                      <Input
+                        placeholder="COBADEFFXXX"
+                        value={form.bic}
+                        onChange={(e) => setForm(f => ({ ...f, bic: e.target.value }))}
+                        className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                      />
+                    </div>
+                  </>
+                )}
 
-            {form.currency === 'GBP' && (
-              <>
-                <div className="space-y-2">
-                  <Label className="text-sm">Account Number</Label>
-                  <Input
-                    placeholder="12345678"
-                    value={form.accountNumber}
-                    onChange={(e) => setForm(f => ({ ...f, accountNumber: e.target.value }))}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm">Sort Code</Label>
-                  <Input
-                    placeholder="12-34-56"
-                    value={form.sortCode}
-                    onChange={(e) => setForm(f => ({ ...f, sortCode: e.target.value }))}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
-                  />
-                </div>
-              </>
-            )}
+                {form.currency === 'GBP' && (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Account Number <span className="text-[hsl(var(--status-danger))]">*</span></Label>
+                      <Input
+                        placeholder="12345678"
+                        value={form.accountNumber}
+                        onChange={(e) => setForm(f => ({ ...f, accountNumber: e.target.value }))}
+                        className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Sort Code <span className="text-[hsl(var(--status-danger))]">*</span></Label>
+                      <Input
+                        placeholder="12-34-56"
+                        value={form.sortCode}
+                        onChange={(e) => setForm(f => ({ ...f, sortCode: e.target.value }))}
+                        className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                      />
+                    </div>
+                  </>
+                )}
 
-            {form.currency === 'USD' && (
-              <>
-                <div className="space-y-2">
-                  <Label className="text-sm">Account Number</Label>
-                  <Input
-                    placeholder="123456789"
-                    value={form.accountNumber}
-                    onChange={(e) => setForm(f => ({ ...f, accountNumber: e.target.value }))}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm">Routing Number</Label>
-                  <Input
-                    placeholder="021000021"
-                    value={form.routingNumber}
-                    onChange={(e) => setForm(f => ({ ...f, routingNumber: e.target.value }))}
-                    className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
-                  />
-                </div>
-              </>
-            )}
+                {form.currency === 'USD' && (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Account Number <span className="text-[hsl(var(--status-danger))]">*</span></Label>
+                      <Input
+                        placeholder="123456789"
+                        value={form.accountNumber}
+                        onChange={(e) => setForm(f => ({ ...f, accountNumber: e.target.value }))}
+                        className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm">Routing Number <span className="text-[hsl(var(--status-danger))]">*</span></Label>
+                      <Input
+                        placeholder="021000021"
+                        value={form.routingNumber}
+                        onChange={(e) => setForm(f => ({ ...f, routingNumber: e.target.value }))}
+                        className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
 
           <SheetFooter>
