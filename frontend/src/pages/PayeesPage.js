@@ -222,16 +222,32 @@ export default function PayeesPage() {
                 data-testid={`payee-item-${i}`}
                 className="flex items-center gap-3 px-4 py-4 bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))] transition-colors duration-150"
               >
-                <div className="w-10 h-10 rounded-full bg-[hsl(var(--surface-2))] flex items-center justify-center text-xs font-bold text-[hsl(var(--foreground))]">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                  payee.provider === 'rail_io'
+                    ? 'bg-[hsl(var(--provider-us)/0.12)] text-[hsl(var(--provider-us))]'
+                    : 'bg-[hsl(var(--accent-teal)/0.12)] text-[hsl(var(--accent-teal))]'
+                }`}>
                   {getPayeeName(payee).slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{getPayeeName(payee)}</p>
-                  <p className="text-[10px] text-[hsl(var(--muted-foreground))] mt-0.5">
-                    {payee.currency || ''}
-                    {payee.account_number ? ` • ${payee.account_number.slice(0, 4)}...${payee.account_number.slice(-4)}` : ''}
-                    {payee.bank_name ? ` • ${payee.bank_name}` : ''}
-                  </p>
+                  <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                    <ProviderBadge provider={payee.provider} size="xs" />
+                    {payee.currency && (
+                      <span className="text-[10px] text-[hsl(var(--muted-foreground))]">{payee.currency}</span>
+                    )}
+                    {payee.status && (
+                      <span className={`text-[10px] ${payee.status === 'active' || payee.status === 'ACTIVE' ? 'text-[hsl(var(--status-success))]' : 'text-[hsl(var(--muted-foreground))]'}`}>
+                        {payee.status}
+                      </span>
+                    )}
+                  </div>
+                  {(payee.account_number || payee.bank_name) && (
+                    <p className="text-[10px] text-[hsl(var(--text-3))] mt-0.5 tabular-nums">
+                      {payee.bank_name ? `${payee.bank_name}` : ''}
+                      {payee.account_number ? `${payee.bank_name ? ' • ' : ''}${payee.account_number.slice(0, 4)}...${payee.account_number.slice(-4)}` : ''}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}
