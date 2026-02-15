@@ -91,16 +91,32 @@ export function AuthProvider({ children }) {
   const checkMfaStatus = useCallback(async () => {
     try {
       const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      console.log('[MFA] Assurance level:', data, error);
       if (error) return false;
       if (data.currentLevel === 'aal1' && data.nextLevel === 'aal2') {
-        const { data: factorsData } = await supabase.auth.mfa.listFactors();
-        setMfaFactors(factorsData?.totp || []);
+        const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
+        console.log('[MFA] Factors:', JSON.stringify(factorsData), factorsError);
+        // Collect all verified factors - TOTP, phone, and any others
+        const allFactors = [];
+        if (factorsData?.totp?.length) allFactors.push(...factorsData.totp);
+        if (factorsData?.phone?.length) allFactors.push(...factorsData.phone);
+        // Also check the 'all' array for any other factor types
+        if (factorsData?.all?.length) {
+          factorsData.all.forEach(f => {
+            if (!allFactors.find(existing => existing.id === f.id)) {
+              allFactors.push(f);
+            }
+          });
+        }
+        console.log('[MFA] All factors collected:', allFactors.length, allFactors.map(f => ({ id: f.id, type: f.factor_type, status: f.status })));
+        setMfaFactors(allFactors);
         setMfaRequired(true);
         return true;
       }
       setMfaRequired(false);
       return false;
-    } catch {
+    } catch (err) {
+      console.error('[MFA] Check error:', err);
       return false;
     }
   }, []);
