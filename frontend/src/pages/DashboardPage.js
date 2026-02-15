@@ -252,14 +252,14 @@ export default function DashboardPage() {
               description="Your activity will show up here"
             />
           ) : (
-            <div className="space-y-2">
+            <div className="rounded-xl border border-[hsl(var(--border))] overflow-hidden divide-y divide-[hsl(var(--border))]">
               {transactions.map((tx, i) => {
                 const incoming = isTxIncoming(tx);
                 return (
                   <div
                     key={tx.id || i}
                     data-testid={`transaction-row-${i}`}
-                    className="flex items-center justify-between gap-3 rounded-xl px-3 py-3 hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
+                    className="flex items-center justify-between gap-3 px-4 py-3.5 bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))] active:bg-[hsl(var(--accent)/0.7)] cursor-pointer transition-colors duration-150"
                     onClick={() => navigate('/transactions')}
                   >
                     <div className="flex items-center gap-3">
