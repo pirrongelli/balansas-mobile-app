@@ -114,16 +114,51 @@ export default function PaymentsPage() {
     }
   };
 
-  // Determine payment scheme based on currency
-  const getPaymentScheme = (currency) => {
-    switch ((currency || '').toUpperCase()) {
-      case 'EUR': return 'SCT';
-      case 'GBP': return 'FPS';
-      case 'USD': return 'ACH'; // ACH is more permissive than DOMESTIC_WIRE for references
-      case 'AUD': return 'NPP';
-      case 'CAD': return 'EMT_EAGLE_NET';
-      default: return 'SWIFT';
-    }
+  // Payment schemes per currency for EU Rails
+  const EU_SCHEMES = {
+    EUR: [{ value: 'SCT', label: 'SEPA Credit Transfer' }],
+    GBP: [{ value: 'FPS', label: 'Faster Payments' }],
+    USD: [
+      { value: 'ACH', label: 'ACH (Next Day)' },
+      { value: 'ACH_SAME_DAY', label: 'ACH Same Day' },
+      { value: 'WIRE', label: 'Domestic Wire' },
+      { value: 'INTERNATIONAL_WIRE', label: 'International Wire' },
+    ],
+  };
+
+  // Payment rails for US Rails
+  const US_RAILS = {
+    USD: [
+      { value: 'ACH', label: 'ACH' },
+      { value: 'FEDWIRE', label: 'Fedwire (Same-day)' },
+      { value: 'SWIFT', label: 'SWIFT (International)' },
+    ],
+    EUR: [
+      { value: 'SEPA_CT', label: 'SEPA Credit Transfer' },
+      { value: 'SWIFT', label: 'SWIFT' },
+    ],
+    GBP: [
+      { value: 'FPS', label: 'Faster Payments' },
+      { value: 'CHAPS', label: 'CHAPS' },
+      { value: 'SWIFT', label: 'SWIFT' },
+    ],
+  };
+
+  const PURPOSES = [
+    'TRADE_TRANSACTIONS', 'PROFESSIONAL_SERVICES', 'PAYROLL',
+    'EXPENSES_REIMBURSEMENT', 'BILLS', 'UTILITY', 'MARKETING',
+    'RENTAL_PROPERTY', 'TAX', 'LOAN', 'MORTGAGE', 'INSURANCE',
+    'CHARITABLE_DONATIONS', 'INVESTMENT',
+  ];
+
+  const getDefaultScheme = (currency) => {
+    const schemes = EU_SCHEMES[currency];
+    return schemes?.[0]?.value || 'SCT';
+  };
+
+  const getDefaultRail = (currency) => {
+    const rails = US_RAILS[currency];
+    return rails?.[0]?.value || 'ACH';
   };
 
   // Validate reference based on payment scheme
