@@ -18,7 +18,7 @@ import {
   SendHorizontal, ChevronRight, Users, ArrowRight,
   Check, AlertCircle, Loader2
 } from 'lucide-react';
-import { formatCurrency } from '@/lib/formatters';
+import { formatCurrency, getPayeeName } from '@/lib/formatters';
 import { toast } from 'sonner';
 
 const STEPS = ['Select Payee', 'Amount', 'Review', 'Confirm'];
