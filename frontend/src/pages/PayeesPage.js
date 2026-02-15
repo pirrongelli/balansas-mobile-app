@@ -364,7 +364,8 @@ export default function PayeesPage() {
               </div>
             </div>
 
-            {/* Address */}
+            {/* Address - EU Rails */}
+            {createProvider === 'fiat_republic' && (
             <div className="pt-2">
               <p className="text-xs font-medium text-[hsl(var(--muted-foreground))] mb-3 uppercase tracking-wider">Address</p>
               <div className="space-y-3">
