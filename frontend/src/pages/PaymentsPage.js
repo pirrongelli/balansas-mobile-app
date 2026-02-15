@@ -425,22 +425,21 @@ export default function PaymentsPage() {
                 {payees.length === 0 ? (
                   <p className="text-sm text-[hsl(var(--muted-foreground))] py-4 text-center">No payees available</p>
                 ) : (
-                  <div className="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+                  <div className="rounded-xl border border-[hsl(var(--border))] overflow-hidden divide-y divide-[hsl(var(--border))] max-h-[50vh] overflow-y-auto">
                     {payees.map((payee, i) => (
                       <div
                         key={payee.id || i}
                         data-testid={`wizard-payee-${i}`}
                         onClick={() => {
                           setSelectedPayee(payee);
-                          // Reset account if currency changed
                           if (selectedAccount && selectedAccount.currency !== payee.currency) {
                             setSelectedAccount(null);
                           }
                         }}
-                        className={`flex items-center gap-3 rounded-xl px-3.5 py-3.5 border cursor-pointer transition-colors duration-150 ${
+                        className={`flex items-center gap-3 px-4 py-4 cursor-pointer transition-colors duration-150 ${
                           selectedPayee?.id === payee.id
-                            ? 'border-[hsl(var(--accent-teal))] bg-[hsl(var(--accent-teal)/0.08)]'
-                            : 'border-[hsl(var(--border))] bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))]'
+                            ? 'bg-[hsl(var(--accent-teal)/0.08)]'
+                            : 'bg-[hsl(var(--surface-1))] hover:bg-[hsl(var(--accent))]'
                         }`}
                       >
                         <div className="w-10 h-10 rounded-full bg-[hsl(var(--surface-2))] flex items-center justify-center text-xs font-bold flex-shrink-0">
@@ -448,7 +447,7 @@ export default function PaymentsPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{getPayeeName(payee)}</p>
-                          <p className="text-[10px] text-[hsl(var(--muted-foreground))] mt-0.5">
+                          <p className="text-[10px] text-[hsl(var(--muted-foreground))] mt-1">
                             {payee.currency}{payee.bank_name ? ` • ${payee.bank_name}` : ''}
                             {payee.account_number ? ` • ${payee.account_number.slice(0, 4)}...${payee.account_number.slice(-4)}` : ''}
                           </p>
