@@ -92,46 +92,77 @@ export default function PaymentsPage() {
     }
   };
 
+  // Determine payment scheme based on currency
+  const getPaymentScheme = (currency) => {
+    switch ((currency || '').toUpperCase()) {
+      case 'EUR': return 'SEPA_CT';
+      case 'GBP': return 'FPS';
+      case 'USD': return 'SWIFT';
+      default: return 'SEPA_CT';
+    }
+  };
+
   const handleSubmitPayment = async () => {
     setIsSubmitting(true);
     try {
       if (selectedAccount.provider === 'fiat_republic') {
+        // EU Rails - Fiat Republic
+        const paymentBody = {
+          sourceAccountId: selectedAccount.fr_account_id || selectedAccount.id,
+          payeeId: selectedPayee.fr_payee_id || selectedPayee.id,
+          amount: amount.toString(), // Must be a string decimal
+          currency: selectedAccount.currency,
+          reference: reference.trim(),
+          paymentScheme: getPaymentScheme(selectedAccount.currency),
+        };
+
+        console.log('[Payment] FR payload:', paymentBody);
         const { data, error: payErr } = await supabase.functions.invoke('fr-proxy', {
           body: {
             endpoint: '/api/v1/payments',
             method: 'POST',
             customerId: customer.id,
-            body: {
-              sourceAccountId: selectedAccount.fr_account_id || selectedAccount.id,
-              payeeId: selectedPayee.fr_payee_id || selectedPayee.id,
-              amount: parseFloat(amount),
-              currency: selectedAccount.currency,
-              reference: reference || 'Payment',
-            },
+            body: paymentBody,
           },
         });
+        
+        // Check for errors in response body
         if (payErr) throw payErr;
+        if (data?.error || data?.errorCode) {
+          throw new Error(data.message || data.error || 'Payment failed');
+        }
         setSubmitResult({ success: true, data });
       } else {
+        // US Rails - Rail.io withdrawal
+        const withdrawalBody = {
+          source_account_id: selectedAccount.rail_account_id || selectedAccount.id,
+          amount: amount.toString(),
+          currency: selectedAccount.currency,
+          reference: reference.trim(),
+          purpose: reference.trim(),
+        };
+
+        console.log('[Payment] Rail payload:', withdrawalBody);
         const { data, error: payErr } = await supabase.functions.invoke('rail-proxy', {
           body: {
             customerId: customer.id,
             endpoint: '/withdrawals',
             method: 'POST',
-            body: {
-              source_account_id: selectedAccount.rail_account_id || selectedAccount.id,
-              amount: parseFloat(amount),
-              reference: reference || 'Payment',
-            },
+            body: withdrawalBody,
           },
         });
+        
         if (payErr) throw payErr;
+        if (data?.error || data?.errorCode) {
+          throw new Error(data.message || data.error || 'Payment failed');
+        }
         setSubmitResult({ success: true, data });
       }
       toast.success('Payment created successfully');
     } catch (err) {
-      setSubmitResult({ success: false, error: err.message });
-      toast.error('Payment failed', { description: err.message });
+      const errorMsg = typeof err === 'string' ? err : (err.message || 'Payment failed');
+      setSubmitResult({ success: false, error: errorMsg });
+      toast.error('Payment failed', { description: errorMsg });
     } finally {
       setIsSubmitting(false);
     }
