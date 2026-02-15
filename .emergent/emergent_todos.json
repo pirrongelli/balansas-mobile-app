@@ -1,18 +1,18 @@
 [
   {
     "content": "Fix EU Rails payment payload (from/to objects, scheme options)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Rebuild US Rails payment as two-step Create+Accept with purpose/rail",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Fix fee preview format (number amount, correct field names)",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Test payment flows",
-    "status": "pending"
+    "status": "in_progress"
   }
 ]
