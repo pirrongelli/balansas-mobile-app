@@ -323,18 +323,20 @@ export default function PayeesPage() {
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label className="text-sm">Type</Label>
-                <Select value={form.type} onValueChange={(v) => setForm(f => ({ ...f, type: v }))}>
-                  <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PERSON">Individual</SelectItem>
-                    <SelectItem value="BUSINESS">Business</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {createProvider === 'fiat_republic' && (
+                <div className="space-y-2">
+                  <Label className="text-sm">Type</Label>
+                  <Select value={form.type} onValueChange={(v) => setForm(f => ({ ...f, type: v }))}>
+                    <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PERSON">Individual</SelectItem>
+                      <SelectItem value="BUSINESS">Business</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label className="text-sm">Currency</Label>
                 <Select value={form.currency} onValueChange={(v) => setForm(f => ({ ...f, currency: v }))}>
