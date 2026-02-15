@@ -122,9 +122,9 @@ export default function ProfilePage() {
           <Card className="bg-[hsl(var(--card))] border-[hsl(var(--border))]">
             <CardContent className="pt-4 pb-4">
               <h3 className="text-sm font-semibold mb-3">Provider Connections</h3>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {providers.map((p, i) => (
-                  <div key={i} className="flex items-center justify-between">
+                  <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg bg-[hsl(var(--surface-2))]">
                     <ProviderBadge provider={p.provider} />
                     <Badge
                       variant="outline"
