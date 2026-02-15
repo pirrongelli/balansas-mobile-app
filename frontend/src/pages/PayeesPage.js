@@ -163,14 +163,14 @@ export default function PayeesPage() {
                 className="flex items-center gap-3 rounded-xl px-3 py-3 bg-[hsl(var(--surface-1))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--accent))] transition-colors duration-150"
               >
                 <div className="w-10 h-10 rounded-full bg-[hsl(var(--surface-2))] flex items-center justify-center text-xs font-bold text-[hsl(var(--foreground))]">
-                  {(payee.name || payee.label || '??').slice(0, 2).toUpperCase()}
+                  {getPayeeName(payee).slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{payee.name || payee.label}</p>
+                  <p className="text-sm font-medium truncate">{getPayeeName(payee)}</p>
                   <p className="text-[10px] text-[hsl(var(--muted-foreground))]">
                     {payee.currency || ''}
-                    {payee.iban ? ` • ${payee.iban.slice(0, 4)}...${payee.iban.slice(-4)}` : ''}
-                    {payee.account_number ? ` • ****${payee.account_number.slice(-4)}` : ''}
+                    {payee.account_number ? ` • ${payee.account_number.slice(0, 4)}...${payee.account_number.slice(-4)}` : ''}
+                    {payee.bank_name ? ` • ${payee.bank_name}` : ''}
                   </p>
                 </div>
               </div>
