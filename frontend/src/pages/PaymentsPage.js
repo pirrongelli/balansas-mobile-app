@@ -475,12 +475,14 @@ export default function PaymentsPage() {
                       </div>
                     </>
                   )}
-                  {reference && (
-                    <div className="flex justify-between">
-                      <span className="text-xs text-[hsl(var(--muted-foreground))]">Reference</span>
-                      <span className="text-sm">{reference}</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between">
+                    <span className="text-xs text-[hsl(var(--muted-foreground))]">Reference</span>
+                    <span className="text-sm">{reference}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-[hsl(var(--muted-foreground))]">Payment Scheme</span>
+                    <span className="text-xs font-medium text-[hsl(var(--foreground))]">{getPaymentScheme(selectedAccount?.currency)}</span>
+                  </div>
                   <div className="flex justify-between">
                     <span className="text-xs text-[hsl(var(--muted-foreground))]">Provider</span>
                     <ProviderBadge provider={selectedAccount?.provider} size="xs" />
