@@ -347,46 +347,54 @@ export default function PayeesPage() {
                     <SelectTrigger className="h-11 bg-[hsl(var(--surface-2))] border-[hsl(var(--border))]">
                       <SelectValue placeholder="Select country" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-[200px]">
-                      <SelectItem value="GB">United Kingdom</SelectItem>
-                      <SelectItem value="DE">Germany</SelectItem>
-                      <SelectItem value="FR">France</SelectItem>
-                      <SelectItem value="ES">Spain</SelectItem>
-                      <SelectItem value="IT">Italy</SelectItem>
-                      <SelectItem value="NL">Netherlands</SelectItem>
-                      <SelectItem value="BE">Belgium</SelectItem>
-                      <SelectItem value="AT">Austria</SelectItem>
-                      <SelectItem value="IE">Ireland</SelectItem>
-                      <SelectItem value="PT">Portugal</SelectItem>
-                      <SelectItem value="FI">Finland</SelectItem>
-                      <SelectItem value="SE">Sweden</SelectItem>
-                      <SelectItem value="DK">Denmark</SelectItem>
-                      <SelectItem value="NO">Norway</SelectItem>
-                      <SelectItem value="CH">Switzerland</SelectItem>
-                      <SelectItem value="PL">Poland</SelectItem>
-                      <SelectItem value="CZ">Czech Republic</SelectItem>
-                      <SelectItem value="LT">Lithuania</SelectItem>
-                      <SelectItem value="LV">Latvia</SelectItem>
-                      <SelectItem value="EE">Estonia</SelectItem>
-                      <SelectItem value="LU">Luxembourg</SelectItem>
-                      <SelectItem value="MT">Malta</SelectItem>
-                      <SelectItem value="CY">Cyprus</SelectItem>
-                      <SelectItem value="GR">Greece</SelectItem>
-                      <SelectItem value="BG">Bulgaria</SelectItem>
-                      <SelectItem value="RO">Romania</SelectItem>
-                      <SelectItem value="HR">Croatia</SelectItem>
-                      <SelectItem value="SI">Slovenia</SelectItem>
-                      <SelectItem value="SK">Slovakia</SelectItem>
-                      <SelectItem value="HU">Hungary</SelectItem>
-                      <SelectItem value="US">United States</SelectItem>
-                      <SelectItem value="CA">Canada</SelectItem>
-                      <SelectItem value="AU">Australia</SelectItem>
-                      <SelectItem value="MX">Mexico</SelectItem>
-                      <SelectItem value="AE">UAE</SelectItem>
-                      <SelectItem value="SG">Singapore</SelectItem>
-                      <SelectItem value="HK">Hong Kong</SelectItem>
-                      <SelectItem value="JP">Japan</SelectItem>
-                      <SelectItem value="BR">Brazil</SelectItem>
+                    <SelectContent className="max-h-[250px]">
+                      {[
+                        { code: 'AF', name: 'Afghanistan' }, { code: 'AL', name: 'Albania' }, { code: 'DZ', name: 'Algeria' },
+                        { code: 'AD', name: 'Andorra' }, { code: 'AO', name: 'Angola' }, { code: 'AG', name: 'Antigua & Barbuda' },
+                        { code: 'AR', name: 'Argentina' }, { code: 'AM', name: 'Armenia' }, { code: 'AU', name: 'Australia' },
+                        { code: 'AT', name: 'Austria' }, { code: 'AZ', name: 'Azerbaijan' }, { code: 'BS', name: 'Bahamas' },
+                        { code: 'BH', name: 'Bahrain' }, { code: 'BD', name: 'Bangladesh' }, { code: 'BB', name: 'Barbados' },
+                        { code: 'BY', name: 'Belarus' }, { code: 'BE', name: 'Belgium' }, { code: 'BZ', name: 'Belize' },
+                        { code: 'BJ', name: 'Benin' }, { code: 'BT', name: 'Bhutan' }, { code: 'BO', name: 'Bolivia' },
+                        { code: 'BA', name: 'Bosnia & Herzegovina' }, { code: 'BW', name: 'Botswana' }, { code: 'BR', name: 'Brazil' },
+                        { code: 'BN', name: 'Brunei' }, { code: 'BG', name: 'Bulgaria' }, { code: 'KH', name: 'Cambodia' },
+                        { code: 'CM', name: 'Cameroon' }, { code: 'CA', name: 'Canada' }, { code: 'CL', name: 'Chile' },
+                        { code: 'CN', name: 'China' }, { code: 'CO', name: 'Colombia' }, { code: 'CR', name: 'Costa Rica' },
+                        { code: 'HR', name: 'Croatia' }, { code: 'CY', name: 'Cyprus' }, { code: 'CZ', name: 'Czech Republic' },
+                        { code: 'DK', name: 'Denmark' }, { code: 'DO', name: 'Dominican Republic' }, { code: 'EC', name: 'Ecuador' },
+                        { code: 'EG', name: 'Egypt' }, { code: 'SV', name: 'El Salvador' }, { code: 'EE', name: 'Estonia' },
+                        { code: 'ET', name: 'Ethiopia' }, { code: 'FI', name: 'Finland' }, { code: 'FR', name: 'France' },
+                        { code: 'GE', name: 'Georgia' }, { code: 'DE', name: 'Germany' }, { code: 'GH', name: 'Ghana' },
+                        { code: 'GR', name: 'Greece' }, { code: 'GT', name: 'Guatemala' }, { code: 'HN', name: 'Honduras' },
+                        { code: 'HK', name: 'Hong Kong' }, { code: 'HU', name: 'Hungary' }, { code: 'IS', name: 'Iceland' },
+                        { code: 'IN', name: 'India' }, { code: 'ID', name: 'Indonesia' }, { code: 'IE', name: 'Ireland' },
+                        { code: 'IL', name: 'Israel' }, { code: 'IT', name: 'Italy' }, { code: 'JM', name: 'Jamaica' },
+                        { code: 'JP', name: 'Japan' }, { code: 'JO', name: 'Jordan' }, { code: 'KZ', name: 'Kazakhstan' },
+                        { code: 'KE', name: 'Kenya' }, { code: 'KR', name: 'South Korea' }, { code: 'KW', name: 'Kuwait' },
+                        { code: 'LV', name: 'Latvia' }, { code: 'LB', name: 'Lebanon' }, { code: 'LI', name: 'Liechtenstein' },
+                        { code: 'LT', name: 'Lithuania' }, { code: 'LU', name: 'Luxembourg' }, { code: 'MY', name: 'Malaysia' },
+                        { code: 'MT', name: 'Malta' }, { code: 'MU', name: 'Mauritius' }, { code: 'MX', name: 'Mexico' },
+                        { code: 'MD', name: 'Moldova' }, { code: 'MC', name: 'Monaco' }, { code: 'MN', name: 'Mongolia' },
+                        { code: 'ME', name: 'Montenegro' }, { code: 'MA', name: 'Morocco' }, { code: 'MZ', name: 'Mozambique' },
+                        { code: 'NP', name: 'Nepal' }, { code: 'NL', name: 'Netherlands' }, { code: 'NZ', name: 'New Zealand' },
+                        { code: 'NI', name: 'Nicaragua' }, { code: 'NG', name: 'Nigeria' }, { code: 'MK', name: 'North Macedonia' },
+                        { code: 'NO', name: 'Norway' }, { code: 'OM', name: 'Oman' }, { code: 'PK', name: 'Pakistan' },
+                        { code: 'PA', name: 'Panama' }, { code: 'PY', name: 'Paraguay' }, { code: 'PE', name: 'Peru' },
+                        { code: 'PH', name: 'Philippines' }, { code: 'PL', name: 'Poland' }, { code: 'PT', name: 'Portugal' },
+                        { code: 'QA', name: 'Qatar' }, { code: 'RO', name: 'Romania' }, { code: 'RW', name: 'Rwanda' },
+                        { code: 'SA', name: 'Saudi Arabia' }, { code: 'RS', name: 'Serbia' }, { code: 'SG', name: 'Singapore' },
+                        { code: 'SK', name: 'Slovakia' }, { code: 'SI', name: 'Slovenia' }, { code: 'ZA', name: 'South Africa' },
+                        { code: 'ES', name: 'Spain' }, { code: 'LK', name: 'Sri Lanka' }, { code: 'SE', name: 'Sweden' },
+                        { code: 'CH', name: 'Switzerland' }, { code: 'TW', name: 'Taiwan' }, { code: 'TZ', name: 'Tanzania' },
+                        { code: 'TH', name: 'Thailand' }, { code: 'TT', name: 'Trinidad & Tobago' }, { code: 'TN', name: 'Tunisia' },
+                        { code: 'TR', name: 'Turkey' }, { code: 'UG', name: 'Uganda' }, { code: 'UA', name: 'Ukraine' },
+                        { code: 'AE', name: 'United Arab Emirates' }, { code: 'GB', name: 'United Kingdom' },
+                        { code: 'US', name: 'United States' }, { code: 'UY', name: 'Uruguay' }, { code: 'UZ', name: 'Uzbekistan' },
+                        { code: 'VE', name: 'Venezuela' }, { code: 'VN', name: 'Vietnam' }, { code: 'ZM', name: 'Zambia' },
+                        { code: 'ZW', name: 'Zimbabwe' },
+                      ].map(c => (
+                        <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
