@@ -75,7 +75,7 @@ export default function PayeesPage() {
           line1: form.line1 || 'N/A',
           city: form.city || 'N/A',
           country: form.country || 'GB',
-          postCode: form.postalCode || 'N/A',
+          postalCode: form.postalCode || 'N/A',
         },
         bankDetails: {},
       };
