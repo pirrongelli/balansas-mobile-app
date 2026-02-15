@@ -76,11 +76,12 @@ export default function MfaVerifyPage() {
     setError('');
   };
 
-  // Separate effect for auto-submit to avoid stale closure issues
+  // Auto-submit when 6 digits entered
   useEffect(() => {
-    if (code.length === 6 && factor && !isLoading) {
+    if (code.length === 6 && factor && !isLoading && !isVerifyingRef.current) {
+      console.log('[MFA Page] Auto-submitting code of length:', code.length);
       const timer = setTimeout(() => {
-        handleVerify();
+        doVerify(code);
       }, 300);
       return () => clearTimeout(timer);
     }
