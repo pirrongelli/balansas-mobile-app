@@ -344,9 +344,21 @@ export default function PayeesPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="EUR">EUR</SelectItem>
-                    <SelectItem value="GBP">GBP</SelectItem>
-                    <SelectItem value="USD">USD</SelectItem>
+                    {createProvider === 'fiat_republic' ? (
+                      <>
+                        <SelectItem value="EUR">EUR</SelectItem>
+                        <SelectItem value="GBP">GBP</SelectItem>
+                        <SelectItem value="USD">USD</SelectItem>
+                      </>
+                    ) : (
+                      <>
+                        <SelectItem value="USD">USD</SelectItem>
+                        <SelectItem value="EUR">EUR</SelectItem>
+                        <SelectItem value="GBP">GBP</SelectItem>
+                        <SelectItem value="MXN">MXN</SelectItem>
+                        <SelectItem value="AED">AED</SelectItem>
+                      </>
+                    )}
                   </SelectContent>
                 </Select>
               </div>
